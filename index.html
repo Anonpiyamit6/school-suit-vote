@@ -3,26 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ระบบโหวตเสื้อสูทโรงเรียน</title>
+  <title>ระบบโหวตเสื้อสูทโรงเรียนบางสะพานวิทยา</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
     :root { --primary-green: #89C040; --primary-yellow: #FFB800; --text-dark: #2D3748; }
     body { font-family: "IBM Plex Sans Thai", sans-serif; background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
-    
     .vote-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
-    
     .choice { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 16px; background: #fff; cursor: pointer; transition: all 0.2s; }
     .choice:hover { border-color: var(--primary-green); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
     .choice:has(input:checked) { border-color: var(--primary-green); background: #F0F9E8; }
     .choice input { accent-color: var(--primary-green); width: 22px; height: 22px; flex-shrink: 0; }
-    
     .choice-img-container { width: 100%; height: 200px; position: relative; overflow: hidden; border-radius: 10px; border: 1px solid #f0f0f0; background: #f9f9f9; }
     .choice-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s; }
     .choice-img-container:hover .choice-img { transform: scale(1.05); }
     .zoom-hint { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 6px; font-size: 12px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;}
-    
     .field { width: 100%; border: 2px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; transition: border-color 0.2s; }
     .field:focus { outline: none; border-color: var(--primary-green); }
     .btn-submit { background: var(--primary-green); color: white; transition: all 0.2s; }
@@ -40,19 +36,16 @@
   </button>
 
   <main class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-start my-auto">
-    
     <!-- ฝั่งโหวต -->
     <section class="vote-card p-6 sm:p-8 relative w-full order-2 md:order-1">
       <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
         <div class="w-12 h-12 border-4 border-gray-100 border-t-[var(--primary-green)] rounded-full animate-spin"></div>
         <p class="mt-4 text-gray-600 font-medium animate-pulse">กำลังโหลดข้อมูลจากระบบ...</p>
       </div>
-
       <div class="text-center mb-6">
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">โหวตเสื้อสูทโรงเรียน</h1>
         <p class="text-gray-500 mt-2 text-sm sm:text-base">กรุณากรอกชื่อและเลือกแบบที่คุณชื่นชอบที่สุด</p>
       </div>
-      
       <div id="notice" class="hidden mb-5 rounded-xl px-4 py-3 font-medium text-sm text-center transition-all"></div>
       
       <form id="vote-form">
@@ -60,15 +53,11 @@
           <label class="block font-semibold mb-2 text-sm text-gray-700">ชื่อ-นามสกุล (ผู้โหวต)</label>
           <input id="voter-name" class="field text-base" type="text" placeholder="ตัวอย่าง: ด.ช. รักเรียน ขยันยิ่ง..." required>
         </div>
-        
         <fieldset>
           <legend class="font-semibold mb-3 text-sm text-gray-700">เลือกแบบเสื้อสูท</legend>
           <div id="dynamic-choices" class="grid sm:grid-cols-2 gap-4"></div>
         </fieldset>
-        
-        <button id="submit-button" type="submit" class="btn-submit mt-8 w-full rounded-full py-4 px-5 font-bold text-lg shadow-md">
-          ส่งผลโหวต
-        </button>
+        <button id="submit-button" type="submit" class="btn-submit mt-8 w-full rounded-full py-4 px-5 font-bold text-lg shadow-md">ส่งผลโหวต</button>
       </form>
     </section>
 
@@ -84,9 +73,7 @@
           <span class="text-xs text-gray-500 block mt-1">โหวตทั้งหมด</span>
         </div>
       </div>
-      <div class="relative w-full mb-6" style="height:220px">
-        <canvas id="results-chart"></canvas>
-      </div>
+      <div class="relative w-full mb-6" style="height:220px"><canvas id="results-chart"></canvas></div>
       <div id="results-list" class="space-y-3 text-sm flex-grow"></div>
     </section>
   </main>
@@ -99,7 +86,7 @@
     </div>
   </div>
 
-  <!-- Admin Modal (ตัดเลือกรหัสสีออกแล้ว) -->
+  <!-- Admin Modal -->
   <div id="admin-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('admin-modal')">
     <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative" onclick="event.stopPropagation()">
       <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1">✕</button>
@@ -111,7 +98,9 @@
         </button>
         <div class="border-t border-gray-200"></div>
         <h3 class="font-bold text-gray-700 text-lg">เพิ่มตัวเลือกใหม่</h3>
-        <div id="admin-msg" class="text-sm hidden p-3 rounded-lg text-center font-medium"></div>
+        
+        <!-- แก้จุดนี้ ให้แสดงข้อความ Error ชัดเจน -->
+        <div id="admin-msg" class="text-sm hidden p-3 rounded-lg font-medium whitespace-pre-wrap"></div>
         
         <form id="add-option-form" class="space-y-4">
           <div>
@@ -129,13 +118,11 @@
   </div>
 
   <script>
-    // ===== เปลี่ยนตรงนี้เป็น URL ใหม่ล่าสุดของคุณ =====
-    const SCRIPT_URL = 'YOUR_NEW_WEB_APP_URL_HERE'; 
-    // ===========================================
+    // ===== เปลี่ยน URL ตรงนี้เป็นลิงก์ของคุณ =====
+    const SCRIPT_URL = 'YOUR_WEB_APP_URL_HERE'; 
+    // =====================================
 
-    // พาเลทสีสำหรับกราฟ (เพราะเราตัดการเลือกรหัสสีออกแล้ว จึงต้องสุ่มสีให้กราฟ)
     const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
-
     const $ = id => document.getElementById(id);
     let chart = null, currentOptions = [], currentResults = {};
 
@@ -148,11 +135,7 @@
 
     function openModal(e, src) { e.preventDefault(); e.stopPropagation(); $('modal-img').src = src; $('image-modal').classList.remove('hidden'); }
     function closeModal(id) { $(id).classList.add('hidden'); }
-    
-    function openAdmin() {
-      const pin = prompt("รหัสผ่านแอดมิน (1234)");
-      if(pin === "1234") $('admin-modal').classList.remove('hidden');
-    }
+    function openAdmin() { if(prompt("รหัสผ่านแอดมิน (1234)") === "1234") $('admin-modal').classList.remove('hidden'); }
 
     function buildVotingForm(options) {
       const container = $('dynamic-choices');
@@ -160,14 +143,7 @@
       
       options.forEach(opt => {
         let imgHtml = opt.image ? `<div class="choice-img-container cursor-zoom-in" onclick="openModal(event, '${opt.image}')"><img src="${opt.image}" class="choice-img" loading="lazy"><div class="zoom-hint">🔍 ขยาย</div></div>` : '';
-        container.innerHTML += `
-          <label class="choice group">
-            ${imgHtml}
-            <div class="flex items-center gap-3 w-full mt-1">
-              <input type="radio" name="color-choice" value="${opt.id}" required>
-              <span class="font-semibold text-gray-700 group-hover:text-gray-900 text-lg ml-1">${opt.label}</span>
-            </div>
-          </label>`;
+        container.innerHTML += `<label class="choice group">${imgHtml}<div class="flex items-center gap-3 w-full mt-1"><input type="radio" name="color-choice" value="${opt.id}" required><span class="font-semibold text-gray-700 group-hover:text-gray-900 text-lg ml-1">${opt.label}</span></div></label>`;
       });
     }
 
@@ -182,29 +158,15 @@
       
       options.forEach((opt, index) => {
         let color = CHART_COLORS[index % CHART_COLORS.length];
-        $('results-list').innerHTML += `
-          <div class="flex justify-between items-center bg-gray-50 border border-gray-100 p-3 rounded-xl">
-            <span class="flex items-center gap-2.5">
-              <span class="w-4 h-4 rounded-full shadow-sm" style="background:${color}"></span>
-              <span class="text-gray-700 font-medium">${opt.label}</span>
-            </span>
-            <strong class="text-gray-900 text-base">${counts[opt.id]} โหวต</strong>
-          </div>`;
+        $('results-list').innerHTML += `<div class="flex justify-between items-center bg-gray-50 border border-gray-100 p-3 rounded-xl"><span class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-full shadow-sm" style="background:${color}"></span><span class="text-gray-700 font-medium">${opt.label}</span></span><strong class="text-gray-900 text-base">${counts[opt.id]} โหวต</strong></div>`;
       });
 
       const labels = options.map(opt => opt.label);
       const dataValues = options.map(opt => counts[opt.id]);
       const bgColors = options.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
 
-      if (chart) { 
-        chart.data.labels = labels; chart.data.datasets[0].data = dataValues; chart.data.datasets[0].backgroundColor = bgColors; chart.update(); 
-      } else { 
-        chart = new Chart($('results-chart'), { 
-          type: 'bar', 
-          data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 6, maxBarThickness: 50 }] }, 
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }, x: { grid: { display: false } } } } 
-        }); 
-      }
+      if (chart) { chart.data.labels = labels; chart.data.datasets[0].data = dataValues; chart.data.datasets[0].backgroundColor = bgColors; chart.update(); } 
+      else { chart = new Chart($('results-chart'), { type: 'bar', data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 6, maxBarThickness: 50 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }, x: { grid: { display: false } } } } }); }
     }
 
     async function loadData() {
@@ -233,20 +195,21 @@
 
     $('add-option-form').addEventListener('submit', async e => {
       e.preventDefault();
-      $('btn-save-opt').disabled = true; $('btn-save-opt').innerHTML = 'กำลังอัปโหลดรูปลงระบบ (กรุณารอ)...';
+      $('btn-save-opt').disabled = true; $('btn-save-opt').innerHTML = 'กำลังอัปโหลดรูปลงระบบ...';
+      $('admin-msg').classList.add('hidden'); // ซ่อน Error เก่าก่อน
       
       const file = $('opt-img').files[0];
       const payload = { action: 'addOption', colorName: $('opt-name').value, imageFile: null, imageName: null, mimeType: null };
 
-      // ย่อขนาดรูปก่อนส่ง ป้องกัน Google Script Error
       const reader = new FileReader();
       reader.onload = function(event) {
         const img = new Image();
         img.onload = async function() {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 800; // ย่อขนาดให้ไม่เกิน 800px เพื่อให้อัปโหลดผ่านชัวร์ๆ
-          const scaleSize = MAX_WIDTH / img.width;
-          canvas.width = MAX_WIDTH;
+          const MAX_WIDTH = 800;
+          let scaleSize = 1;
+          if (img.width > MAX_WIDTH) scaleSize = MAX_WIDTH / img.width;
+          canvas.width = img.width * scaleSize;
           canvas.height = img.height * scaleSize;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -258,16 +221,23 @@
           try {
             const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
             const result = await response.json();
+            
             if(result.status === 'success') {
-              $('admin-msg').textContent = "เพิ่มเรียบร้อยแล้ว!"; $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
-              $('add-option-form').reset(); loadData();
+              $('admin-msg').textContent = "เพิ่มเรียบร้อยแล้ว!"; 
+              $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
+              $('add-option-form').reset(); 
+              loadData();
             } else {
-              throw new Error(result.msg);
+              throw new Error(result.msg || "Unknown Server Error");
             }
           } catch(err) { 
-            $('admin-msg').textContent = "เกิดข้อผิดพลาดในการอัปโหลด"; $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
+            // โชว์ Error ที่แท้จริงออกมา
+            $('admin-msg').textContent = "พังเพราะ: " + err.message; 
+            $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
           } finally { 
-            $('btn-save-opt').disabled = false; $('btn-save-opt').innerHTML = 'บันทึกเข้าสู่ระบบ'; 
+            $('btn-save-opt').disabled = false; 
+            $('btn-save-opt').innerHTML = 'บันทึกเข้าสู่ระบบ'; 
+            $('admin-msg').classList.remove('hidden');
           }
         }
         img.src = event.target.result;
