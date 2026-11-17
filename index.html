@@ -3,10 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
   <title>ระบบโหวตเสื้อสูทโรงเรียน</title>
+  
+  <!-- 1. ใส่ลิงก์รูปโลโก้ สำหรับแสดงบนแท็บเบราว์เซอร์ (Favicon) -->
+  <link rel="icon" type="image/png" href="ใส่ลิงก์รูปโลโก้ตรงนี้">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  
+  <!-- เพิ่มไลบรารี ป๊อปอัปแจ้งเตือนสวยๆ (SweetAlert2) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     :root { --primary-green: #89C040; --primary-yellow: #FFB800; --text-dark: #2D3748; }
     body { font-family: "IBM Plex Sans Thai", sans-serif; background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
@@ -32,7 +41,13 @@
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
-<body class="w-full relative">
+<body class="w-full relative pt-16 sm:pt-0">
+
+  <!-- 2. ป้ายโลโก้และชื่อระบบ มุมขวาบน -->
+  <div class="absolute top-3 right-4 sm:top-6 sm:right-6 flex items-center gap-3 z-30 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-full shadow-sm border border-gray-100">
+    <img src="ใส่ลิงก์รูปโลโก้ตรงนี้" class="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-sm" alt="ตราโรงเรียน">
+    <span class="font-bold text-[var(--primary-green)] text-sm sm:text-base hidden sm:block tracking-wide">ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา</span>
+  </div>
 
   <div id="view-vote" class="w-full flex justify-center p-4 sm:p-6 min-h-screen items-center">
     
@@ -44,7 +59,7 @@
       ⚙️
     </button>
 
-    <main class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-start my-auto">
+    <main class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-start my-auto mt-10 sm:mt-auto">
       
       <section class="vote-card p-6 sm:p-8 relative w-full order-2 md:order-1">
         <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
@@ -56,7 +71,6 @@
           <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">โหวตเสื้อสูทโรงเรียน</h1>
           <p class="text-gray-500 mt-2 text-sm">กรุณากรอกชื่อและเลือกแบบที่คุณชื่นชอบที่สุด</p>
         </div>
-        <div id="notice" class="hidden mb-5 rounded-xl px-4 py-3 font-medium text-sm text-center"></div>
         
         <form id="vote-form">
           <div class="mb-5">
@@ -106,26 +120,24 @@
 
   <div id="admin-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('admin-modal')">
     <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative" onclick="event.stopPropagation()">
-      <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1">✕</button>
-      <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-gray-800">ระบบจัดการ (Admin)</h2>
+      <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1 hover:bg-gray-200">✕</button>
+      <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-gray-800">⚙️ ระบบจัดการ (Admin)</h2>
       
       <div class="space-y-5">
-        <button onclick="downloadCSV()" class="w-full bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-semibold py-3 rounded-xl border border-yellow-200">
-          📥 ดาวน์โหลดสรุปผล (CSV)
+        <button onclick="downloadCSV()" class="w-full bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-semibold py-3 rounded-xl border border-yellow-200 transition-all">
+          📥 ดาวน์โหลดสรุปผลโหวต (CSV)
         </button>
         <div class="border-t border-gray-200"></div>
-        <h3 class="font-bold text-gray-700 text-lg">เพิ่มตัวเลือกใหม่</h3>
-        
-        <div id="admin-msg" class="text-sm hidden p-3 rounded-lg font-medium"></div>
+        <h3 class="font-bold text-gray-700 text-lg">➕ เพิ่มตัวเลือกแบบเสื้อสูทใหม่</h3>
         
         <form id="add-option-form" class="space-y-4">
           <div>
             <label class="text-sm font-semibold text-gray-600 block mb-1">ชื่อเรียกเสื้อสูท</label>
-            <input type="text" id="opt-name" class="field" required>
+            <input type="text" id="opt-name" class="field" placeholder="เช่น 057 เบอร์ 1" required>
           </div>
           <div>
             <label class="text-sm font-semibold text-gray-600 block mb-1">รูปตัวอย่างเสื้อ (จำเป็น)</label>
-            <input type="file" id="opt-img" accept="image/*" required class="w-full text-sm">
+            <input type="file" id="opt-img" accept="image/*" required class="w-full text-sm p-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[var(--primary-green)] bg-gray-50">
           </div>
           <button type="submit" id="btn-save-opt" class="btn-submit w-full py-3 rounded-xl font-bold mt-2">อัปโหลดและบันทึก</button>
         </form>
@@ -136,9 +148,9 @@
   <script>
     // ===== ใส่ลิงก์ Apps Script ของคุณตรงนี้ =====
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYTWNZ2AEW7-sYbDveS9GyYuLi8BCnri6sluOrfW7A8TJ-vtVCRsbOGy4dO9C3eM31oA/exec'; 
-    // =======================================
-
+    // ===== ใส่ API KEY จากเว็บ IMGBB ตรงนี้ =====
     const IMGBB_API_KEY = 'c924b331d25dfd52f01c19c5f21a6222'; 
+    
     const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
     const $ = id => document.getElementById(id);
     let chart = null, dashChart = null, currentOptions = [], currentResults = {};
@@ -158,15 +170,25 @@
       else { if (document.exitFullscreen) document.exitFullscreen(); }
     }
 
-    function showNotice(msg, error = false) {
-      $('notice').textContent = msg;
-      $('notice').className = error ? 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-red-100 text-red-700' : 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-green-100 text-green-700';
-      $('notice').classList.remove('hidden'); setTimeout(() => $('notice').classList.add('hidden'), 5000);
-    }
-
     function openModal(e, src) { e.preventDefault(); e.stopPropagation(); $('modal-img').src = src; $('image-modal').classList.remove('hidden'); }
     function closeModal(id) { $(id).classList.add('hidden'); }
-    function openAdmin() { if(prompt("รหัสผ่านแอดมิน (1234)") === "1234") $('admin-modal').classList.remove('hidden'); }
+    function openAdmin() { 
+      Swal.fire({
+        title: 'รหัสผ่านแอดมิน',
+        input: 'password',
+        inputPlaceholder: 'กรอกรหัสผ่าน (1234)',
+        showCancelButton: true,
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#89C040'
+      }).then((result) => {
+        if (result.value === "1234") {
+          $('admin-modal').classList.remove('hidden');
+        } else if (result.value) {
+          Swal.fire({ icon: 'error', title: 'รหัสผ่านผิด', confirmButtonColor: '#89C040' });
+        }
+      });
+    }
 
     function buildVotingForm(options) {
       const container = $('dynamic-choices');
@@ -228,67 +250,71 @@
       finally { $('loading').classList.add('hidden'); }
     }
 
+    // จัดการการส่งผลโหวตด้วย SweetAlert
     $('vote-form').addEventListener('submit', async e => {
       e.preventDefault();
       const choice = document.querySelector('input[name="color-choice"]:checked');
       if (!choice) return;
-      $('submit-button').disabled = true; $('submit-button').innerHTML = 'กำลังบันทึก...';
+      $('submit-button').disabled = true;
+
+      Swal.fire({ title: 'กำลังบันทึกผลโหวต...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+
       try {
         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'vote', voterName: $('voter-name').value.trim(), optionId: choice.value }) });
-        showNotice('โหวตเรียบร้อย ขอบคุณครับ!'); $('vote-form').reset(); loadData(); window.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch (err) { showNotice('เกิดข้อผิดพลาด', true); } 
-      finally { $('submit-button').disabled = false; $('submit-button').innerHTML = 'ส่งผลโหวต'; }
+        $('vote-form').reset(); 
+        loadData(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        Swal.fire({ icon: 'success', title: 'โหวตเรียบร้อย!', text: 'ขอบคุณที่ร่วมออกเสียงครับ', confirmButtonColor: '#89C040' });
+      } catch (err) { 
+        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถส่งข้อมูลได้ โปรดลองอีกครั้ง', confirmButtonColor: '#89C040' });
+      } finally { 
+        $('submit-button').disabled = false; 
+      }
     });
 
-    // โค้ดส่วนแอดมินอัปโหลดรูป (แก้ไขใหม่ ส่งไฟล์ตรงๆ เสถียรกว่า)
+    // จัดการแอดมินอัปโหลด (เพิ่มรัวๆ ได้เลย)
     $('add-option-form').addEventListener('submit', async e => {
       e.preventDefault();
-      $('btn-save-opt').disabled = true; 
-      $('btn-save-opt').innerHTML = 'กำลังอัปโหลดรูปภาพ...';
-      $('admin-msg').classList.add('hidden');
+      $('btn-save-opt').disabled = true;
       
       const file = $('opt-img').files[0];
       if(!file) return;
 
-      // 1. นำไฟล์รูปใส่ FormData แบบตรงๆ (ไม่ต้องทำ Base64)
+      Swal.fire({ title: 'กำลังอัปโหลดรูปภาพ...', html: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+
       const formData = new FormData();
       formData.append('image', file);
 
       try {
-        // ส่งไฟล์ไปที่ ImgBB
-        const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
-          method: 'POST', 
-          body: formData 
-        });
-        
+        const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
         const imgData = await imgRes.json();
         
         if(imgData.success) {
-          $('btn-save-opt').innerHTML = 'กำลังบันทึกลงระบบ...';
+          Swal.fire({ title: 'กำลังบันทึกลงระบบ...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
           
-          // 2. นำลิงก์รูปที่ได้ ส่งไปเก็บที่ Google Sheets
           const payload = { action: 'addOption', name: $('opt-name').value, imageUrl: imgData.data.url };
-          await fetch(SCRIPT_URL, { 
-            method: 'POST', 
-            body: JSON.stringify(payload) 
-          });
+          await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
           
-          $('admin-msg').textContent = "เพิ่มตัวเลือกสำเร็จแล้ว!"; 
-          $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
+          // โหลดหน้าใหม่เพื่อให้รูปขึ้น + เคลียร์ฟอร์มเตรียมให้แอดมินอัปรัวๆ
           $('add-option-form').reset(); 
-          loadData(); // โหลดหน้าใหม่เพื่อให้รูปขึ้น
+          loadData();
+          
+          Swal.fire({ 
+            icon: 'success', 
+            title: 'เพิ่มตัวเลือกสำเร็จ!', 
+            text: 'คุณสามารถพิมพ์ชื่อและเลือกรูป เพื่ออัปโหลดอันต่อไปได้เลย', 
+            confirmButtonColor: '#89C040',
+            timer: 2500
+          });
+
         } else { 
-          // หาก ImgBB แจ้ง Error ให้ดึงข้อความจริงๆ ของมันมาแสดง
           const errorMsg = imgData.error ? imgData.error.message : "เซิร์ฟเวอร์ปฏิเสธไฟล์ภาพ";
           throw new Error(errorMsg); 
         }
       } catch(err) { 
-        $('admin-msg').textContent = "เกิดข้อผิดพลาด: " + err.message; 
-        $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
+        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message, confirmButtonColor: '#89C040' });
       } finally { 
         $('btn-save-opt').disabled = false; 
-        $('btn-save-opt').innerHTML = 'อัปโหลดและบันทึก'; 
-        $('admin-msg').classList.remove('hidden');
       }
     });
 
