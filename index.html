@@ -52,7 +52,7 @@
 </head>
 <body class="w-full relative">
 
-  <!-- Header บาร์ด้านบนสุด (ปรับปรุงใหม่ แยกซ้าย-ขวา) -->
+  <!-- Header บาร์ด้านบนสุด -->
   <header id="vote-header" class="w-full bg-white/90 backdrop-blur-md fixed top-0 left-0 z-40 border-b border-gray-200 shadow-sm transition-all">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
       
@@ -64,7 +64,7 @@
         </h1>
       </div>
 
-      <!-- ขวา: ปุ่มจัดการเล็กๆ ซ่อนคำบนมือถือเพื่อประหยัดพื้นที่ -->
+      <!-- ขวา: ปุ่มจัดการเล็กๆ -->
       <div class="flex items-center gap-1.5 sm:gap-2">
         <button onclick="switchView('dashboard')" class="text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition flex items-center gap-1.5 font-medium border border-gray-200">
           📊 <span class="hidden sm:inline">หน้าสรุปผล</span>
@@ -79,11 +79,23 @@
 
   <!-- หน้าจอโหวตหลัก -->
   <div id="view-vote" class="w-full flex justify-center px-4 pt-24 pb-12 min-h-screen items-start">
-    <!-- คอนเทนต์หลัก จัดเรียง Grid ใหม่ -->
     <main class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 sm:gap-8 items-start mx-auto">
       
-      <!-- ส่วนที่ 1: ฟอร์มโหวต -->
-      <section class="vote-card p-5 sm:p-8 relative w-full flex flex-col order-1">
+      <!-- ส่วนที่ 1: ผลโหวตปัจจุบัน (บนมือถือจะขึ้นก่อน: order-1 / บนคอมอยู่ขวา: lg:order-2) -->
+      <section class="vote-card p-5 sm:p-8 flex flex-col h-full w-full order-1 lg:order-2">
+        <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
+          <div><h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2></div>
+          <div class="text-right">
+            <span id="total-votes" class="block font-bold text-4xl text-[var(--primary-yellow)] leading-none">0</span> 
+            <span class="text-xs text-gray-500 block mt-1">โหวตทั้งหมด</span>
+          </div>
+        </div>
+        <div class="relative w-full mb-6" style="height:220px"><canvas id="results-chart"></canvas></div>
+        <div id="results-list" class="space-y-3 text-sm flex-grow max-h-[50vh] overflow-y-auto pr-1"></div>
+      </section>
+
+      <!-- ส่วนที่ 2: ฟอร์มโหวต (บนมือถือจะอยู่ล่าง: order-2 / บนคอมอยู่ซ้าย: lg:order-1) -->
+      <section class="vote-card p-5 sm:p-8 relative w-full flex flex-col order-2 lg:order-1">
         
         <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
           <div class="w-12 h-12 border-4 border-gray-100 border-t-[var(--primary-green)] rounded-full animate-spin"></div>
@@ -108,18 +120,6 @@
         </form>
       </section>
 
-      <!-- ส่วนที่ 2: ผลโหวตปัจจุบัน -->
-      <section class="vote-card p-5 sm:p-8 flex flex-col h-full w-full order-2">
-        <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
-          <div><h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2></div>
-          <div class="text-right">
-            <span id="total-votes" class="block font-bold text-4xl text-[var(--primary-yellow)] leading-none">0</span> 
-            <span class="text-xs text-gray-500 block mt-1">โหวตทั้งหมด</span>
-          </div>
-        </div>
-        <div class="relative w-full mb-6" style="height:220px"><canvas id="results-chart"></canvas></div>
-        <div id="results-list" class="space-y-3 text-sm flex-grow max-h-[50vh] overflow-y-auto pr-1"></div>
-      </section>
     </main>
   </div>
 
@@ -194,9 +194,7 @@
   </div>
 
   <script>
-    // ===== ใส่ลิงก์ Apps Script ของคุณตรงนี้ =====
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYTWNZ2AEW7-sYbDveS9GyYuLi8BCnri6sluOrfW7A8TJ-vtVCRsbOGy4dO9C3eM31oA/exec'; 
-    // ===== อัปเดต API KEY เรียบร้อยแล้ว =====
     const IMGBB_API_KEY = 'c924b331d25dfd52f01c19c5f21a6222'; 
     
     const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
