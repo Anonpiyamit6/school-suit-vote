@@ -16,16 +16,17 @@
     :root { --primary-green: #89C040; --primary-yellow: #FFB800; --text-dark: #2D3748; }
     body { font-family: "IBM Plex Sans Thai", sans-serif; background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
     
+    /* สไตล์สำหรับการ์ดโหวต */
     .vote-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
-    .choice { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 16px; background: #fff; cursor: pointer; transition: all 0.2s; }
+    .choice { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 16px; background: #fff; cursor: pointer; transition: all 0.2s; }
     .choice:hover { border-color: var(--primary-green); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-    .choice:has(input:checked) { border-color: var(--primary-green); background: #F0F9E8; }
+    .choice:has(input:checked) { border-color: var(--primary-green); background: #F0F9E8; box-shadow: 0 0 0 2px rgba(137, 192, 64, 0.2); }
     .choice input { accent-color: var(--primary-green); width: 22px; height: 22px; flex-shrink: 0; }
-    .choice-img-container { width: 100%; height: 200px; position: relative; overflow: hidden; border-radius: 10px; border: 1px solid #f0f0f0; background: #f9f9f9; }
+    .choice-img-container { width: 100%; height: 180px; position: relative; overflow: hidden; border-radius: 10px; border: 1px solid #f0f0f0; background: #f9f9f9; }
     .choice-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s; }
     .choice-img-container:hover .choice-img { transform: scale(1.05); }
     .zoom-hint { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 6px; font-size: 12px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;}
-    .field { width: 100%; border: 2px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; transition: border-color 0.2s; }
+    .field { width: 100%; border: 2px solid #E2E8F0; border-radius: 12px; padding: 14px; transition: border-color 0.2s; font-size: 16px; }
     .field:focus { outline: none; border-color: var(--primary-green); }
     .btn-submit { background: var(--primary-green); color: white; transition: all 0.2s; }
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
@@ -55,51 +56,64 @@
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
-<body class="w-full relative pt-16 sm:pt-0">
+<body class="w-full relative">
 
-  <!-- ป้ายโลโก้มุมขวา (จะถูกซ่อนตอนเปิดหน้า Dashboard) -->
-  <div id="top-right-logo" class="absolute top-3 right-4 sm:top-6 sm:right-6 flex items-center gap-3 z-30 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-full shadow-sm border border-gray-100 transition-opacity">
-    <img src="./logo.png" class="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-sm" alt="ตราโรงเรียน">
-    <span class="font-bold text-[var(--primary-green)] text-sm sm:text-base hidden sm:block tracking-wide">ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา</span>
-  </div>
+  <!-- Header บาร์ด้านบนสุด (แก้ไขให้แสดงชัดเจนทั้งบนมือถือและคอม) -->
+  <header id="vote-header" class="w-full bg-white/90 backdrop-blur-md fixed top-0 left-0 z-40 border-b border-gray-200 shadow-sm transition-all">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-center sm:justify-start gap-3">
+      <img src="./logo.png" class="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-sm object-contain" alt="โลโก้โรงเรียน">
+      <h1 class="font-bold text-emerald-800 text-[15px] sm:text-xl tracking-wide leading-tight text-center sm:text-left">
+        ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา
+      </h1>
+    </div>
+  </header>
 
-  <div id="view-vote" class="w-full flex justify-center p-4 sm:p-6 min-h-screen items-center">
+  <!-- หน้าจอโหวตหลัก -->
+  <div id="view-vote" class="w-full flex justify-center px-4 pt-24 pb-32 min-h-screen items-start">
     
-    <button onclick="switchView('dashboard')" class="fixed bottom-4 left-4 bg-gray-900 text-white p-3 rounded-xl shadow-lg z-40 transition-all hover:scale-105 flex items-center gap-2 text-sm font-semibold">
-      📊 เปิดหน้าสรุปผลขึ้นจอ
-    </button>
+    <!-- ปุ่มควบคุมลอยตัวด้านล่าง (จัดกลุ่มไม่ให้เกะกะ) -->
+    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-3 z-40 w-max bg-white/80 backdrop-blur-md px-4 py-3 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-gray-100">
+      <button onclick="switchView('dashboard')" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl shadow-md transition-all hover:bg-gray-800 hover:scale-105 flex items-center gap-2 text-sm font-semibold">
+        📊 เปิดหน้าขึ้นจอ
+      </button>
+      <div class="w-px h-8 bg-gray-300"></div>
+      <button onclick="openAdmin()" class="bg-gray-100 text-gray-600 hover:text-[var(--primary-yellow)] hover:bg-white p-2.5 rounded-xl shadow-sm border border-gray-200 transition-all hover:scale-110 flex items-center justify-center">
+        ⚙️ จัดการ
+      </button>
+    </div>
 
-    <button onclick="openAdmin()" class="fixed bottom-4 right-4 bg-white text-gray-500 hover:text-[var(--primary-yellow)] p-3 rounded-full shadow-lg border border-gray-100 z-40 transition-all hover:scale-110">
-      ⚙️
-    </button>
-
-    <main class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-start my-auto mt-10 sm:mt-auto">
+    <!-- คอนเทนต์หลัก จัดเรียง Grid ใหม่ -->
+    <main class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 sm:gap-8 items-start mx-auto">
       
-      <section class="vote-card p-6 sm:p-8 relative w-full order-2 md:order-1">
+      <!-- ส่วนที่ 1: ฟอร์มโหวต (บนมือถือจะอยู่ด้านบนสุด) -->
+      <section class="vote-card p-5 sm:p-8 relative w-full flex flex-col order-1">
+        
         <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
           <div class="w-12 h-12 border-4 border-gray-100 border-t-[var(--primary-green)] rounded-full animate-spin"></div>
           <p class="mt-4 text-gray-600 font-medium">กำลังโหลดข้อมูล...</p>
         </div>
 
         <div class="text-center mb-6">
-          <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">โหวตเสื้อสูทโรงเรียน</h1>
-          <p class="text-gray-500 mt-2 text-sm">กรุณากรอกชื่อและเลือกแบบที่คุณชื่นชอบที่สุด</p>
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">เลือกแบบที่คุณชื่นชอบ</h2>
+          <p class="text-gray-500 mt-2 text-sm">กรุณากรอกชื่อและเลือกแบบเสื้อสูท 1 แบบ</p>
         </div>
         
-        <form id="vote-form">
-          <div class="mb-5">
+        <form id="vote-form" class="flex-grow flex flex-col">
+          <div class="mb-6">
             <label class="block font-semibold mb-2 text-sm text-gray-700">ชื่อ-นามสกุล (ผู้โหวต)</label>
             <input id="voter-name" class="field" type="text" placeholder="ระบุชื่อของคุณ..." required>
           </div>
-          <fieldset>
+          <fieldset class="flex-grow">
             <legend class="font-semibold mb-3 text-sm text-gray-700">เลือกแบบเสื้อสูท</legend>
-            <div id="dynamic-choices" class="grid sm:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto p-1"></div>
+            <!-- กล่องตัวเลือก ปรับให้เลื่อนดูได้ถ้าเยอะไป -->
+            <div id="dynamic-choices" class="grid sm:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-1 pb-2"></div>
           </fieldset>
-          <button id="submit-button" type="submit" class="btn-submit mt-8 w-full rounded-full py-4 px-5 font-bold text-lg shadow-md">ส่งผลโหวต</button>
+          <button id="submit-button" type="submit" class="btn-submit mt-6 w-full rounded-xl py-4 px-5 font-bold text-lg shadow-md">ส่งผลโหวต</button>
         </form>
       </section>
 
-      <section class="vote-card p-6 sm:p-8 flex flex-col h-full w-full order-1 md:order-2 max-h-screen overflow-y-auto">
+      <!-- ส่วนที่ 2: ผลโหวตปัจจุบัน (บนมือถือจะอยู่ด้านล่าง) -->
+      <section class="vote-card p-5 sm:p-8 flex flex-col h-full w-full order-2">
         <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
           <div><h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2></div>
           <div class="text-right">
@@ -108,7 +122,7 @@
           </div>
         </div>
         <div class="relative w-full mb-6" style="height:220px"><canvas id="results-chart"></canvas></div>
-        <div id="results-list" class="space-y-3 text-sm flex-grow"></div>
+        <div id="results-list" class="space-y-3 text-sm flex-grow max-h-[50vh] overflow-y-auto pr-1"></div>
       </section>
     </main>
   </div>
@@ -125,9 +139,7 @@
 
       <!-- ส่วนหัว -->
       <div class="text-center mb-4 pt-4">
-        <!-- โลโก้ปรับใหม่: โค้งมน มีมิติ -->
         <img src="./logo.png" class="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 rounded-3xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] border-[4px] border-white bg-white/60 backdrop-blur-sm object-contain p-1 transform transition hover:scale-105">
-        
         <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-teal-500 tracking-wide drop-shadow-sm mb-4">
           สรุปผลโหวตเสื้อสูทแบบเรียลไทม์
         </h1>
@@ -164,7 +176,7 @@
       <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-gray-800">⚙️ ระบบจัดการ (Admin)</h2>
       
       <div class="space-y-5">
-        <button onclick="downloadCSV()" class="w-full bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-semibold py-3 rounded-xl border border-yellow-200 transition-all">
+        <button onclick="downloadCSV()" class="w-full bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-semibold py-3 rounded-xl border border-yellow-200 transition-all shadow-sm">
           📥 ดาวน์โหลดสรุปผลโหวต (CSV)
         </button>
         <div class="border-t border-gray-200"></div>
@@ -173,13 +185,13 @@
         <form id="add-option-form" class="space-y-4">
           <div>
             <label class="text-sm font-semibold text-gray-600 block mb-1">ชื่อเรียกเสื้อสูท</label>
-            <input type="text" id="opt-name" class="field" placeholder="เช่น 057 เบอร์ 1" required>
+            <input type="text" id="opt-name" class="field !py-2" placeholder="เช่น 057 เบอร์ 1" required>
           </div>
           <div>
             <label class="text-sm font-semibold text-gray-600 block mb-1">รูปตัวอย่างเสื้อ (จำเป็น)</label>
             <input type="file" id="opt-img" accept="image/*" required class="w-full text-sm p-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[var(--primary-green)] bg-gray-50">
           </div>
-          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-3 rounded-xl font-bold mt-2">อัปโหลดและบันทึก</button>
+          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-3 rounded-xl font-bold mt-2 shadow-md">อัปโหลดและบันทึก</button>
         </form>
       </div>
     </div>
@@ -197,13 +209,13 @@
     function switchView(view) {
       if(view === 'dashboard') {
         $('view-vote').style.display = 'none'; 
-        $('top-right-logo').classList.add('hidden');
+        $('vote-header').classList.add('hidden'); // ซ่อน Header บนจอ Dashboard
         $('view-dashboard').style.display = 'block';
         autoRefreshInterval = setInterval(loadData, 5000); 
         setTimeout(() => renderPageantDashboard(), 100);
       } else {
         $('view-dashboard').style.display = 'none'; 
-        $('top-right-logo').classList.remove('hidden');
+        $('vote-header').classList.remove('hidden'); // แสดง Header คืน
         $('view-vote').style.display = 'flex'; 
         clearInterval(autoRefreshInterval);
       }
@@ -236,11 +248,11 @@
 
     function buildVotingForm(options) {
       const container = $('dynamic-choices');
-      container.innerHTML = options.length ? '' : '<p class="text-red-500 text-sm col-span-2 text-center p-4 bg-red-50 rounded-lg">แอดมินยังไม่ได้ตั้งค่าตัวเลือก</p>';
+      container.innerHTML = options.length ? '' : '<p class="text-red-500 text-sm col-span-2 text-center p-4 bg-red-50 rounded-xl">แอดมินยังไม่ได้ตั้งค่าตัวเลือก</p>';
       options.forEach(opt => {
         container.innerHTML += `<label class="choice group">
           <div class="choice-img-container cursor-zoom-in" onclick="openModal(event, '${opt.image}')"><img src="${opt.image}" class="choice-img" loading="lazy"><div class="zoom-hint">🔍 ขยาย</div></div>
-          <div class="flex items-center gap-3 w-full mt-1"><input type="radio" name="color-choice" value="${opt.id}" required><span class="font-semibold text-gray-700 group-hover:text-gray-900 text-lg ml-1">${opt.label}</span></div>
+          <div class="flex items-center gap-3 w-full mt-1 px-1"><input type="radio" name="color-choice" value="${opt.id}" required><span class="font-semibold text-gray-700 group-hover:text-gray-900 text-lg">${opt.label}</span></div>
         </label>`;
       });
     }
@@ -268,7 +280,6 @@
       }
     }
 
-    // ฟังก์ชันเวทีประกวด (ปรับแต่งสีตัวหนังสือและกล่องให้เข้ากับพื้นพาสเทล)
     function renderPageantDashboard() {
       let sortedData = currentOptions.map(opt => ({
         ...opt,
@@ -279,7 +290,7 @@
       const runnersContainer = $('dashboard-runners');
       
       if(sortedData.length === 0) {
-        podiumContainer.innerHTML = `<div class="text-gray-500 text-xl w-full text-center">ยังไม่มีตัวเลือกให้โหวต</div>`;
+        podiumContainer.innerHTML = `<div class="text-emerald-700 font-medium text-xl w-full text-center bg-white/50 py-4 rounded-xl">ยังไม่มีตัวเลือกให้โหวต</div>`;
         return;
       }
 
@@ -289,7 +300,6 @@
 
       let podiumHTML = ``;
       
-      // อันดับ 2
       if(top2) {
         podiumHTML += `
           <div class="podium-item rank-2 transform transition hover:scale-105">
@@ -298,11 +308,8 @@
             <img src="${top2.image}" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">2</span></div>
           </div>`;
-      } else {
-        podiumHTML += `<div class="podium-item"></div>`;
-      }
+      } else { podiumHTML += `<div class="podium-item"></div>`; }
 
-      // อันดับ 1
       if(top1) {
         podiumHTML += `
           <div class="podium-item rank-1 transform transition hover:scale-105 z-20">
@@ -314,7 +321,6 @@
           </div>`;
       }
 
-      // อันดับ 3
       if(top3) {
         podiumHTML += `
           <div class="podium-item rank-3 transform transition hover:scale-105">
@@ -323,13 +329,10 @@
             <img src="${top3.image}" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">3</span></div>
           </div>`;
-      } else {
-        podiumHTML += `<div class="podium-item"></div>`;
-      }
+      } else { podiumHTML += `<div class="podium-item"></div>`; }
 
       podiumContainer.innerHTML = podiumHTML;
 
-      // อันดับที่เหลือ
       const runners = sortedData.slice(3);
       if(runners.length > 0) {
         let runnersHTML = '';
@@ -345,7 +348,7 @@
         });
         runnersContainer.innerHTML = runnersHTML;
       } else {
-        runnersContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 font-medium">ไม่มีตัวเลือกอื่นแล้ว</div>`;
+        runnersContainer.innerHTML = `<div class="col-span-full text-center text-emerald-700 bg-white/40 py-3 rounded-lg font-medium">ไม่มีตัวเลือกอื่นแล้ว</div>`;
       }
     }
 
@@ -363,7 +366,7 @@
         sortedOptions.forEach((opt, index) => {
           let crown = index === 0 ? '👑 ' : '';
           let color = index === 0 ? '#FFB800' : CHART_COLORS[index % CHART_COLORS.length];
-          $('results-list').innerHTML += `<div class="flex justify-between items-center bg-gray-50 border border-gray-100 p-3 rounded-xl"><span class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-full" style="background:${color}"></span><span class="text-gray-700 font-medium">${crown}${opt.label}</span></span><strong class="text-gray-900 text-base">${opt.votes} โหวต</strong></div>`;
+          $('results-list').innerHTML += `<div class="flex justify-between items-center bg-gray-50 border border-gray-100 p-3 rounded-xl hover:bg-gray-100 transition"><span class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-full" style="background:${color}"></span><span class="text-gray-700 font-medium">${crown}${opt.label}</span></span><strong class="text-gray-900 text-base">${opt.votes} โหวต</strong></div>`;
         });
 
       } catch (e) { console.log(e); } 
@@ -416,17 +419,9 @@
           $('add-option-form').reset(); 
           loadData();
           
-          Swal.fire({ 
-            icon: 'success', 
-            title: 'เพิ่มตัวเลือกสำเร็จ!', 
-            text: 'คุณสามารถพิมพ์ชื่อและเลือกรูป เพื่ออัปโหลดอันต่อไปได้เลย', 
-            confirmButtonColor: '#89C040',
-            timer: 2500
-          });
-
+          Swal.fire({ icon: 'success', title: 'เพิ่มตัวเลือกสำเร็จ!', text: 'อัปโหลดภาพถัดไปได้เลย', confirmButtonColor: '#89C040', timer: 2500 });
         } else { 
-          const errorMsg = imgData.error ? imgData.error.message : "เซิร์ฟเวอร์ปฏิเสธไฟล์ภาพ";
-          throw new Error(errorMsg); 
+          throw new Error(imgData.error ? imgData.error.message : "เซิร์ฟเวอร์ปฏิเสธไฟล์ภาพ"); 
         }
       } catch(err) { 
         Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message, confirmButtonColor: '#89C040' });
