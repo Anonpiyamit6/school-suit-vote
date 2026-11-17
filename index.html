@@ -6,14 +6,14 @@
   
   <title>ระบบโหวตเสื้อสูทโรงเรียน</title>
   
-  <!-- 1. ใส่ลิงก์รูปโลโก้ สำหรับแสดงบนแท็บเบราว์เซอร์ (Favicon) -->
-  <link rel="icon" type="image/png" href="ใส่ลิงก์รูปโลโก้ตรงนี้">
+  <!-- ดึงรูปโลโก้จากไฟล์ใน GitHub มาทำไอคอนแท็บเบราว์เซอร์ -->
+  <link rel="icon" type="image/png" href="./logo.png">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   
-  <!-- เพิ่มไลบรารี ป๊อปอัปแจ้งเตือนสวยๆ (SweetAlert2) -->
+  <!-- ป๊อปอัปแจ้งเตือนสวยๆ -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
@@ -43,9 +43,9 @@
 </head>
 <body class="w-full relative pt-16 sm:pt-0">
 
-  <!-- 2. ป้ายโลโก้และชื่อระบบ มุมขวาบน -->
+  <!-- ป้ายโลโก้และชื่อระบบ มุมขวาบน ดึงรูปจาก GitHub (logo.png) -->
   <div class="absolute top-3 right-4 sm:top-6 sm:right-6 flex items-center gap-3 z-30 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-full shadow-sm border border-gray-100">
-    <img src="ใส่ลิงก์รูปโลโก้ตรงนี้" class="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-sm" alt="ตราโรงเรียน">
+    <img src="./logo.png" class="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-sm" alt="ตราโรงเรียน">
     <span class="font-bold text-[var(--primary-green)] text-sm sm:text-base hidden sm:block tracking-wide">ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา</span>
   </div>
 
@@ -146,9 +146,7 @@
   </div>
 
   <script>
-    // ===== ใส่ลิงก์ Apps Script ของคุณตรงนี้ =====
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYTWNZ2AEW7-sYbDveS9GyYuLi8BCnri6sluOrfW7A8TJ-vtVCRsbOGy4dO9C3eM31oA/exec'; 
-    // ===== ใส่ API KEY จากเว็บ IMGBB ตรงนี้ =====
     const IMGBB_API_KEY = 'c924b331d25dfd52f01c19c5f21a6222'; 
     
     const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
@@ -250,7 +248,6 @@
       finally { $('loading').classList.add('hidden'); }
     }
 
-    // จัดการการส่งผลโหวตด้วย SweetAlert
     $('vote-form').addEventListener('submit', async e => {
       e.preventDefault();
       const choice = document.querySelector('input[name="color-choice"]:checked');
@@ -272,7 +269,6 @@
       }
     });
 
-    // จัดการแอดมินอัปโหลด (เพิ่มรัวๆ ได้เลย)
     $('add-option-form').addEventListener('submit', async e => {
       e.preventDefault();
       $('btn-save-opt').disabled = true;
@@ -295,7 +291,6 @@
           const payload = { action: 'addOption', name: $('opt-name').value, imageUrl: imgData.data.url };
           await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
           
-          // โหลดหน้าใหม่เพื่อให้รูปขึ้น + เคลียร์ฟอร์มเตรียมให้แอดมินอัปรัวๆ
           $('add-option-form').reset(); 
           loadData();
           
