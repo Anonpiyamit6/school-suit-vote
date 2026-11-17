@@ -8,48 +8,38 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
-    :root {
-      --bg-color: #FAF4E1; /* สีพื้นหลังครีมเหลืองอ่อน */
-      --primary-green: #89C040; /* สีเขียวตามโลโก้เพชรราชพฤกษ์ */
-      --primary-yellow: #FFB800;
-      --text-dark: #2D3748;
-    }
-    body { 
-      font-family: "IBM Plex Sans Thai", sans-serif; 
-      background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%);
-      color: var(--text-dark);
-      min-height: 100vh;
-    }
-    .vote-card { 
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 24px; 
-      box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
-      border: 1px solid rgba(255,255,255,0.5);
-      backdrop-filter: blur(10px);
-    }
-    .choice { 
-      display: flex; align-items: center; gap: 15px; width: 100%; 
-      padding: 14px; border: 2px solid #E2E8F0; border-radius: 16px; 
-      background: #fff; cursor: pointer; transition: all 0.2s; 
-    }
-    .choice:hover { border-color: var(--primary-green); transform: translateY(-2px); }
+    :root { --primary-green: #89C040; --primary-yellow: #FFB800; --text-dark: #2D3748; }
+    body { font-family: "IBM Plex Sans Thai", sans-serif; background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%); color: var(--text-dark); min-height: 100vh; }
+    .vote-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); }
+    
+    /* สไตล์สำหรับกล่องตัวเลือกที่มีรูป */
+    .choice { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 16px; background: #fff; cursor: pointer; transition: all 0.2s; }
+    .choice:hover { border-color: var(--primary-green); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
     .choice:has(input:checked) { border-color: var(--primary-green); background: #F0F9E8; }
-    .choice input { accent-color: var(--primary-green); width: 20px; height: 20px; }
-    .swatch { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .choice input { accent-color: var(--primary-green); width: 22px; height: 22px; flex-shrink: 0; }
+    .choice-img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; border: 1px solid #f0f0f0; }
+    
+    .swatch { width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: inline-block; }
     .field { width: 100%; min-height: 48px; border: 2px solid #E2E8F0; border-radius: 12px; padding: 10px 14px; transition: border-color 0.2s; }
     .field:focus { outline: none; border-color: var(--primary-green); }
     .btn-submit { background: var(--primary-green); color: white; transition: all 0.2s; }
     .btn-submit:hover { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
-    .btn-submit:disabled { opacity: 0.6; cursor: wait; transform: none; box-shadow: none; }
-    .rise { animation: rise 0.6s ease-out forwards; opacity: 0; transform: translateY(20px); }
-    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    .btn-export { background: #fff; border: 2px solid var(--primary-yellow); color: #d99a00; transition: all 0.2s; }
+    .btn-export:hover { background: #fffdf5; transform: translateY(-2px); }
   </style>
 </head>
 <body class="w-full flex items-center justify-center p-4">
 
-  <main class="max-w-4xl w-full grid md:grid-cols-2 gap-6 items-start mt-10 mb-10">
-    <!-- หน้าต่างโหวต -->
-    <section class="vote-card p-6 sm:p-8 rise" style="animation-delay: 0.1s;">
+  <main class="max-w-5xl w-full grid md:grid-cols-[1.2fr_1fr] gap-6 items-start mt-8 mb-8">
+    
+    <!-- ฝั่งซ้าย: ฟอร์มโหวตและรูปภาพ -->
+    <section class="vote-card p-6 sm:p-8 relative">
+      <!-- Loading Overlay -->
+      <div id="loading" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
+        <div class="w-10 h-10 border-4 border-gray-200 border-t-[var(--primary-green)] rounded-full animate-spin"></div>
+        <p class="mt-3 text-gray-500 font-medium">กำลังโหลดข้อมูลจากระบบ...</p>
+      </div>
+
       <div class="text-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">โหวตสีเสื้อสูทโรงเรียน</h1>
         <p class="text-gray-500 mt-2 text-sm">กรุณากรอกชื่อและเลือกสีที่คุณชื่นชอบที่สุด</p>
@@ -64,70 +54,47 @@
         </div>
         
         <fieldset>
-          <legend class="font-semibold mb-3 text-sm text-gray-700">เลือกสีเสื้อสูท</legend>
-          <div class="grid grid-cols-1 gap-3">
-            <label class="choice"> 
-              <input type="radio" name="color-choice" value="navy" required> 
-              <span class="swatch" style="background:#253c59"></span> 
-              <span class="font-semibold">สีกรมท่า (Navy)</span> 
-            </label>
-            <label class="choice"> 
-              <input type="radio" name="color-choice" value="charcoal" required> 
-              <span class="swatch" style="background:#42494b"></span> 
-              <span class="font-semibold">สีเทาเข้ม (Charcoal)</span> 
-            </label>
-            <label class="choice"> 
-              <input type="radio" name="color-choice" value="sand" required> 
-              <span class="swatch" style="background:#c6ac87"></span> 
-              <span class="font-semibold">สีเบจ (Sand)</span> 
-            </label>
-            <label class="choice"> 
-              <input type="radio" name="color-choice" value="burgundy" required> 
-              <span class="swatch" style="background:#713e49"></span> 
-              <span class="font-semibold">สีแดงไวน์ (Burgundy)</span> 
-            </label>
+          <legend class="font-semibold mb-3 text-sm text-gray-700">เลือกแบบเสื้อสูท</legend>
+          <!-- กล่องตัวเลือกจะถูกสร้างอัตโนมัติตรงนี้ -->
+          <div id="dynamic-choices" class="grid sm:grid-cols-2 gap-4">
+            <!-- ข้อมูลจาก Google Sheet จะมาแทรกที่นี่ -->
           </div>
         </fieldset>
         
-        <button id="submit-button" type="submit" class="btn-submit mt-6 w-full rounded-full py-3 px-5 font-bold text-lg flex justify-center items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
+        <button id="submit-button" type="submit" class="btn-submit mt-6 w-full rounded-full py-3.5 px-5 font-bold text-lg flex justify-center items-center gap-2">
           ส่งผลโหวต
         </button>
       </form>
     </section>
 
-    <!-- หน้าต่างแสดงผล (อัปเดตเรียลไทม์) -->
-    <section class="vote-card p-6 sm:p-8 rise" style="animation-delay: 0.3s;">
-      <div class="flex justify-between items-start mb-4">
+    <!-- ฝั่งขวา: สรุปผลโหวต -->
+    <section class="vote-card p-6 sm:p-8 flex flex-col h-full">
+      <div class="flex justify-between items-start mb-6">
         <div>
           <h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2>
-          <p class="text-xs text-gray-500 mt-1">อัปเดตข้อมูลจากระบบ</p>
+          <p class="text-xs text-gray-500 mt-1">สรุปผลแบบเรียลไทม์</p>
         </div>
         <div class="text-right">
-          <span id="total-votes" class="block font-bold text-3xl text-[var(--primary-yellow)] leading-none">0</span> 
+          <span id="total-votes" class="block font-bold text-4xl text-[var(--primary-yellow)] leading-none">0</span> 
           <span class="text-xs text-gray-500 block mt-1">โหวตทั้งหมด</span>
         </div>
       </div>
       
-      <div class="relative w-full mt-4" style="height:250px">
+      <div class="relative w-full mb-6" style="height:220px">
         <canvas id="results-chart"></canvas>
       </div>
 
-      <div class="mt-6 space-y-2 text-sm">
-        <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg">
-          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#253c59]"></span>กรมท่า</span><strong id="count-navy">0</strong>
-        </div>
-        <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg">
-          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#42494b]"></span>เทาเข้ม</span><strong id="count-charcoal">0</strong>
-        </div>
-        <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg">
-          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#c6ac87]"></span>เบจ</span><strong id="count-sand">0</strong>
-        </div>
-        <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg">
-          <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#713e49]"></span>แดงไวน์</span><strong id="count-burgundy">0</strong>
-        </div>
+      <div id="results-list" class="space-y-2 text-sm flex-grow mb-6">
+        <!-- รายการสรุปผลจะแสดงตรงนี้ -->
       </div>
+
+      <!-- ปุ่มโหลดสรุป (สำหรับแอดมินหรือทุกคน) -->
+      <button onclick="downloadCSV()" class="btn-export w-full rounded-xl py-3 px-5 font-semibold text-sm flex justify-center items-center gap-2 mt-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+        แอดมิน: ดาวน์โหลดสรุปผลโหวต (CSV)
+      </button>
     </section>
+
   </main>
 
   <script>
@@ -135,59 +102,99 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQJtKe9kE0c5ojkvgm2fE2BpoeMl9-VjCtHaIXdjLblUhEfNYhOZMeq3F8rpfQl9bCQA/exec'; 
     // ===============================================
 
-    const colors = [
-      { id:'navy', label:'กรมท่า', hex:'#253c59' },
-      { id:'charcoal', label:'เทาเข้ม', hex:'#42494b' },
-      { id:'sand', label:'เบจ', hex:'#c6ac87' },
-      { id:'burgundy', label:'แดงไวน์', hex:'#713e49' }
-    ];
     const $ = id => document.getElementById(id);
     let chart = null;
+    let currentOptions = []; // เก็บตัวเลือกที่ดึงมา
+    let currentResults = {}; // เก็บผลโหวต
 
     function showNotice(message, error = false) {
       const el = $('notice');
       el.textContent = message;
       el.classList.remove('hidden');
-      if (error) {
-        el.className = 'mb-4 rounded-xl px-4 py-3 font-medium text-sm text-center bg-red-100 text-red-700 border border-red-200';
-      } else {
-        el.className = 'mb-4 rounded-xl px-4 py-3 font-medium text-sm text-center bg-green-100 text-green-700 border border-green-200';
-      }
+      el.className = error 
+        ? 'mb-4 rounded-xl px-4 py-3 font-medium text-sm text-center bg-red-100 text-red-700 border border-red-200' 
+        : 'mb-4 rounded-xl px-4 py-3 font-medium text-sm text-center bg-green-100 text-green-700 border border-green-200';
       setTimeout(() => el.classList.add('hidden'), 5000);
     }
 
-    function renderResults(data) {
-      const counts = Object.fromEntries(colors.map(c => [c.id, 0]));
-      data.forEach(record => {
-        if (counts[record.color_choice] !== undefined) counts[record.color_choice]++;
+    // ฟังก์ชันสร้าง UI ให้ผู้ใช้โหวต
+    function buildVotingForm(options) {
+      const container = $('dynamic-choices');
+      container.innerHTML = ''; // เคลียร์ของเก่า
+      
+      if(options.length === 0) {
+        container.innerHTML = '<p class="text-red-500 text-sm col-span-2">แอดมินยังไม่ได้ตั้งค่าตัวเลือกสีใน Google Sheet (แท็บ Options)</p>';
+        return;
+      }
+
+      options.forEach(opt => {
+        // ถ้ารูปไม่มี จะไม่แสดงแท็ก img
+        const imgHtml = opt.image ? `<img src="${opt.image}" class="choice-img" alt="${opt.label}">` : '';
+        const hex = opt.hex || '#ccc'; // ถ้าไม่ใส่รหัสสีมา ให้เป็นสีเทา
+
+        container.innerHTML += `
+          <label class="choice"> 
+            ${imgHtml}
+            <div class="flex items-center gap-3 w-full mt-1">
+              <input type="radio" name="color-choice" value="${opt.id}" required> 
+              <span class="swatch" style="background:${hex}"></span> 
+              <span class="font-semibold text-gray-800">${opt.label}</span> 
+            </div>
+          </label>
+        `;
+      });
+    }
+
+    // ฟังก์ชันอัปเดตกราฟและสรุปผล
+    function buildResultsView(options, votes) {
+      // นับคะแนน
+      let counts = {};
+      options.forEach(opt => counts[opt.id] = 0); // ตั้งค่าเริ่มต้นเป็น 0
+      votes.forEach(voteId => {
+        if(counts[voteId] !== undefined) counts[voteId]++;
       });
       
-      const total = data.length;
-      $('total-votes').textContent = total;
-      colors.forEach(c => $('count-' + c.id).textContent = counts[c.id]);
+      currentResults = counts; // เก็บไว้เผื่อแอดมินกดโหลด CSV
+      $('total-votes').textContent = votes.length;
 
-      const values = colors.map(c => counts[c.id]);
+      // สร้างรายการ List สรุปผล
+      const listContainer = $('results-list');
+      listContainer.innerHTML = '';
       
+      options.forEach(opt => {
+        const hex = opt.hex || '#ccc';
+        listContainer.innerHTML += `
+          <div class="flex justify-between items-center bg-white border border-gray-100 p-3 rounded-xl shadow-sm">
+            <span class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full" style="background:${hex}"></span>${opt.label}
+            </span>
+            <strong class="text-gray-800 text-base">${counts[opt.id]} โหวต</strong>
+          </div>
+        `;
+      });
+
+      // อัปเดตกราฟ
+      const labels = options.map(opt => opt.label);
+      const dataValues = options.map(opt => counts[opt.id]);
+      const bgColors = options.map(opt => opt.hex || '#cccccc');
+
       if (chart) {
-        chart.data.datasets[0].data = values;
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = dataValues;
+        chart.data.datasets[0].backgroundColor = bgColors;
         chart.update();
       } else {
         chart = new Chart($('results-chart'), {
           type: 'bar',
           data: {
-            labels: colors.map(c => c.label),
-            datasets: [{
-              data: values,
-              backgroundColor: colors.map(c => c.hex),
-              borderRadius: 8,
-              barPercentage: 0.6
-            }]
+            labels: labels,
+            datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 6, barPercentage: 0.5 }]
           },
           options: {
             responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              y: { beginAtZero: true, ticks: { stepSize: 1 } },
+              y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
               x: { grid: { display: false } }
             }
           }
@@ -195,14 +202,21 @@
       }
     }
 
-    // ฟังก์ชันโหลดข้อมูลตอนเปิดหน้าเว็บ
+    // โหลดข้อมูลทั้งหมด
     async function loadData() {
       try {
+        $('loading').classList.remove('hidden');
         const response = await fetch(SCRIPT_URL);
         const data = await response.json();
-        renderResults(data);
+        
+        currentOptions = data.options;
+        buildVotingForm(data.options);
+        buildResultsView(data.options, data.votes);
       } catch (error) {
         console.error("Error loading data:", error);
+        showNotice('ไม่สามารถเชื่อมต่อฐานข้อมูลได้', true);
+      } finally {
+        $('loading').classList.add('hidden');
       }
     }
 
@@ -212,10 +226,7 @@
       const name = $('voter-name').value.trim();
       const choice = document.querySelector('input[name="color-choice"]:checked');
       
-      if (!name || !choice) {
-        showNotice('กรุณากรอกชื่อและเลือกสี', true);
-        return;
-      }
+      if (!name || !choice) return;
 
       $('submit-button').disabled = true;
       $('submit-button').innerHTML = 'กำลังบันทึก...';
@@ -228,14 +239,35 @@
         
         showNotice('บันทึกผลโหวตเรียบร้อย ขอบคุณครับ!');
         $('vote-form').reset();
-        loadData(); // โหลดกราฟใหม่
+        loadData(); // โหลดกราฟและรายการใหม่
       } catch (error) {
         showNotice('เกิดข้อผิดพลาด กรุณาลองใหม่', true);
       } finally {
         $('submit-button').disabled = false;
-        $('submit-button').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg> ส่งผลโหวต';
+        $('submit-button').innerHTML = 'ส่งผลโหวต';
       }
     });
+
+    // ฟังก์ชันสำหรับแอดมิน โหลดไฟล์ CSV
+    function downloadCSV() {
+      if(currentOptions.length === 0) return alert('ยังไม่มีข้อมูล');
+      
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // รองรับภาษาไทย
+      csvContent += "ID,ชื่อสีเสื้อ,จำนวนโหวต\n";
+      
+      currentOptions.forEach(opt => {
+        const count = currentResults[opt.id] || 0;
+        csvContent += `"${opt.id}","${opt.label}",${count}\n`;
+      });
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "สรุปผลโหวตสีเสื้อสูท.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
     // เรียกดึงข้อมูลทันทีเมื่อเปิดหน้า
     loadData();
