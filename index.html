@@ -16,7 +16,6 @@
     :root { --primary-green: #89C040; --primary-yellow: #FFB800; --text-dark: #2D3748; }
     body { font-family: "IBM Plex Sans Thai", sans-serif; background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
     
-    /* สไตล์สำหรับการ์ดโหวต */
     .vote-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
     .choice { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 16px; background: #fff; cursor: pointer; transition: all 0.2s; }
     .choice:hover { border-color: var(--primary-green); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
@@ -32,23 +31,18 @@
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
     .btn-submit:disabled { opacity: 0.6; cursor: wait; }
     
-    /* สไตล์สำหรับหน้าจอ Dashboard ประกวด (สีพาสเทลเขียว) */
+    /* Dashboard */
     .dashboard-view { display: none; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); min-height: 100vh; color: #1f2937; padding: 20px; overflow-y: auto;}
-    
     .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 40px; height: 550px; }
     .podium-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 28%; position: relative; text-align: center; }
-    
     .podium-img { width: 100%; height: 160px; object-fit: contain; background: white; border-radius: 16px; padding: 10px; margin-bottom: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 10; transition: transform 0.3s; }
-    
     .rank-1 .podium-img { border: 4px solid #FFD700; height: 200px; box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3); }
     .rank-2 .podium-img { border: 4px solid #C0C0C0; height: 160px; box-shadow: 0 10px 30px rgba(192, 192, 192, 0.4); }
     .rank-3 .podium-img { border: 4px solid #CD7F32; height: 140px; box-shadow: 0 10px 30px rgba(205, 127, 50, 0.4); }
-    
     .podium-base { width: 100%; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 15px; color: #111; font-weight: bold; position: relative; overflow: hidden; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);}
     .rank-1 .podium-base { height: 160px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); }
     .rank-2 .podium-base { height: 120px; background: linear-gradient(180deg, #E8E8E8 0%, #B0C4DE 100%); }
     .rank-3 .podium-base { height: 90px; background: linear-gradient(180deg, #FFB38A 0%, #CD853F 100%); }
-    
     .podium-rank-num { font-size: 3rem; line-height: 1; opacity: 0.9; color: #1f2937; text-shadow: 0 2px 4px rgba(255,255,255,0.6); }
     .rank-1 .podium-rank-num { font-size: 4.5rem; }
 
@@ -58,34 +52,37 @@
 </head>
 <body class="w-full relative">
 
-  <!-- Header บาร์ด้านบนสุด (แก้ไขให้แสดงชัดเจนทั้งบนมือถือและคอม) -->
+  <!-- Header บาร์ด้านบนสุด (ปรับปรุงใหม่ แยกซ้าย-ขวา) -->
   <header id="vote-header" class="w-full bg-white/90 backdrop-blur-md fixed top-0 left-0 z-40 border-b border-gray-200 shadow-sm transition-all">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-center sm:justify-start gap-3">
-      <img src="./logo.png" class="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-sm object-contain" alt="โลโก้โรงเรียน">
-      <h1 class="font-bold text-emerald-800 text-[15px] sm:text-xl tracking-wide leading-tight text-center sm:text-left">
-        ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา
-      </h1>
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
+      
+      <!-- ซ้าย: โลโก้ และ ชื่อระบบ -->
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <img src="./logo.png" class="w-9 h-9 sm:w-11 sm:h-11 drop-shadow-sm object-contain" alt="โลโก้โรงเรียน">
+        <h1 class="font-bold text-emerald-800 text-[14px] sm:text-lg tracking-wide leading-tight line-clamp-1">
+          ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา
+        </h1>
+      </div>
+
+      <!-- ขวา: ปุ่มจัดการเล็กๆ ซ่อนคำบนมือถือเพื่อประหยัดพื้นที่ -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <button onclick="switchView('dashboard')" class="text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition flex items-center gap-1.5 font-medium border border-gray-200">
+          📊 <span class="hidden sm:inline">หน้าสรุปผล</span>
+        </button>
+        <button onclick="openAdmin()" class="text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-yellow-600 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition flex items-center gap-1 font-medium border border-gray-200" title="สำหรับแอดมิน">
+          ⚙️ <span class="hidden sm:inline">จัดการ</span>
+        </button>
+      </div>
+
     </div>
   </header>
 
   <!-- หน้าจอโหวตหลัก -->
-  <div id="view-vote" class="w-full flex justify-center px-4 pt-24 pb-32 min-h-screen items-start">
-    
-    <!-- ปุ่มควบคุมลอยตัวด้านล่าง (จัดกลุ่มไม่ให้เกะกะ) -->
-    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-3 z-40 w-max bg-white/80 backdrop-blur-md px-4 py-3 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-gray-100">
-      <button onclick="switchView('dashboard')" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl shadow-md transition-all hover:bg-gray-800 hover:scale-105 flex items-center gap-2 text-sm font-semibold">
-        📊 เปิดหน้าขึ้นจอ
-      </button>
-      <div class="w-px h-8 bg-gray-300"></div>
-      <button onclick="openAdmin()" class="bg-gray-100 text-gray-600 hover:text-[var(--primary-yellow)] hover:bg-white p-2.5 rounded-xl shadow-sm border border-gray-200 transition-all hover:scale-110 flex items-center justify-center">
-        ⚙️ จัดการ
-      </button>
-    </div>
-
+  <div id="view-vote" class="w-full flex justify-center px-4 pt-24 pb-12 min-h-screen items-start">
     <!-- คอนเทนต์หลัก จัดเรียง Grid ใหม่ -->
     <main class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 sm:gap-8 items-start mx-auto">
       
-      <!-- ส่วนที่ 1: ฟอร์มโหวต (บนมือถือจะอยู่ด้านบนสุด) -->
+      <!-- ส่วนที่ 1: ฟอร์มโหวต -->
       <section class="vote-card p-5 sm:p-8 relative w-full flex flex-col order-1">
         
         <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
@@ -105,14 +102,13 @@
           </div>
           <fieldset class="flex-grow">
             <legend class="font-semibold mb-3 text-sm text-gray-700">เลือกแบบเสื้อสูท</legend>
-            <!-- กล่องตัวเลือก ปรับให้เลื่อนดูได้ถ้าเยอะไป -->
             <div id="dynamic-choices" class="grid sm:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-1 pb-2"></div>
           </fieldset>
           <button id="submit-button" type="submit" class="btn-submit mt-6 w-full rounded-xl py-4 px-5 font-bold text-lg shadow-md">ส่งผลโหวต</button>
         </form>
       </section>
 
-      <!-- ส่วนที่ 2: ผลโหวตปัจจุบัน (บนมือถือจะอยู่ด้านล่าง) -->
+      <!-- ส่วนที่ 2: ผลโหวตปัจจุบัน -->
       <section class="vote-card p-5 sm:p-8 flex flex-col h-full w-full order-2">
         <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
           <div><h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2></div>
@@ -127,7 +123,7 @@
     </main>
   </div>
 
-  <!-- หน้าจอ Dashboard (สไตล์เวทีประกวด พาสเทลเขียว) -->
+  <!-- หน้าจอ Dashboard (สไตล์เวทีประกวด) -->
   <div id="view-dashboard" class="dashboard-view w-full">
     <div class="max-w-7xl mx-auto relative pt-4 pb-10">
       
@@ -153,7 +149,7 @@
         <!-- จะถูกสร้างโดย JavaScript -->
       </div>
 
-      <!-- อันดับที่เหลือ (Runner-ups) -->
+      <!-- อันดับที่เหลือ -->
       <div class="max-w-5xl mx-auto">
         <h3 class="text-xl text-emerald-700 text-center mb-6 font-semibold flex items-center justify-center gap-4">
           <span class="h-px bg-emerald-200 flex-grow"></span> อันดับที่เหลือ <span class="h-px bg-emerald-200 flex-grow"></span>
@@ -198,7 +194,9 @@
   </div>
 
   <script>
+    // ===== ใส่ลิงก์ Apps Script ของคุณตรงนี้ =====
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYTWNZ2AEW7-sYbDveS9GyYuLi8BCnri6sluOrfW7A8TJ-vtVCRsbOGy4dO9C3eM31oA/exec'; 
+    // ===== อัปเดต API KEY เรียบร้อยแล้ว =====
     const IMGBB_API_KEY = 'c924b331d25dfd52f01c19c5f21a6222'; 
     
     const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
@@ -209,13 +207,13 @@
     function switchView(view) {
       if(view === 'dashboard') {
         $('view-vote').style.display = 'none'; 
-        $('vote-header').classList.add('hidden'); // ซ่อน Header บนจอ Dashboard
+        $('vote-header').classList.add('hidden'); 
         $('view-dashboard').style.display = 'block';
         autoRefreshInterval = setInterval(loadData, 5000); 
         setTimeout(() => renderPageantDashboard(), 100);
       } else {
         $('view-dashboard').style.display = 'none'; 
-        $('vote-header').classList.remove('hidden'); // แสดง Header คืน
+        $('vote-header').classList.remove('hidden'); 
         $('view-vote').style.display = 'flex'; 
         clearInterval(autoRefreshInterval);
       }
