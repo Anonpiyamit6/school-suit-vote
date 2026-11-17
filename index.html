@@ -7,7 +7,7 @@
   <title>ระบบโหวตเสื้อสูทโรงเรียน</title>
   
   <link rel="icon" type="image/png" href="./logo.png">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <!-- ลบ Chart.js ออก เพราะเราไม่ใช้กราฟแท่งแล้ว ทำให้เว็บโหลดเร็วขึ้น -->
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -31,20 +31,30 @@
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
     .btn-submit:disabled { opacity: 0.6; cursor: wait; }
     
-    /* Dashboard */
+    /* สไตล์โพเดียมใหญ่ (Dashboard) */
     .dashboard-view { display: none; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); min-height: 100vh; color: #1f2937; padding: 20px; overflow-y: auto;}
     .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 40px; height: 550px; }
+    
+    /* สไตล์โพเดียมเล็ก (หน้าโหวต) */
+    .mini-podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; height: 260px; margin-bottom: 20px; }
+    .mini-podium-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 32%; position: relative; text-align: center; }
+    
+    /* ส่วนร่วมโพเดียม */
     .podium-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 28%; position: relative; text-align: center; }
-    .podium-img { width: 100%; height: 160px; object-fit: contain; background: white; border-radius: 16px; padding: 10px; margin-bottom: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 10; transition: transform 0.3s; }
-    .rank-1 .podium-img { border: 4px solid #FFD700; height: 200px; box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3); }
-    .rank-2 .podium-img { border: 4px solid #C0C0C0; height: 160px; box-shadow: 0 10px 30px rgba(192, 192, 192, 0.4); }
-    .rank-3 .podium-img { border: 4px solid #CD7F32; height: 140px; box-shadow: 0 10px 30px rgba(205, 127, 50, 0.4); }
-    .podium-base { width: 100%; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 15px; color: #111; font-weight: bold; position: relative; overflow: hidden; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);}
-    .rank-1 .podium-base { height: 160px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); }
-    .rank-2 .podium-base { height: 120px; background: linear-gradient(180deg, #E8E8E8 0%, #B0C4DE 100%); }
-    .rank-3 .podium-base { height: 90px; background: linear-gradient(180deg, #FFB38A 0%, #CD853F 100%); }
-    .podium-rank-num { font-size: 3rem; line-height: 1; opacity: 0.9; color: #1f2937; text-shadow: 0 2px 4px rgba(255,255,255,0.6); }
-    .rank-1 .podium-rank-num { font-size: 4.5rem; }
+    
+    .podium-img { width: 100%; object-fit: contain; background: white; border-radius: 12px; padding: 8px; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 10; transition: transform 0.3s; }
+    
+    .rank-1 .podium-img { border: 4px solid #FFD700; box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3); }
+    .rank-2 .podium-img { border: 3px solid #C0C0C0; box-shadow: 0 10px 20px rgba(192, 192, 192, 0.4); }
+    .rank-3 .podium-img { border: 3px solid #CD7F32; box-shadow: 0 10px 20px rgba(205, 127, 50, 0.4); }
+    
+    .podium-base { width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 10px; color: #111; font-weight: bold; position: relative; overflow: hidden; box-shadow: 0 -5px 15px rgba(0,0,0,0.05);}
+    .rank-1 .podium-base { background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); }
+    .rank-2 .podium-base { background: linear-gradient(180deg, #E8E8E8 0%, #B0C4DE 100%); }
+    .rank-3 .podium-base { background: linear-gradient(180deg, #FFB38A 0%, #CD853F 100%); }
+    
+    .podium-rank-num { font-size: 2.5rem; line-height: 1; opacity: 0.9; color: #1f2937; text-shadow: 0 2px 4px rgba(255,255,255,0.6); }
+    .rank-1 .podium-rank-num { font-size: 3.5rem; }
 
     .modal-overlay { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -56,7 +66,6 @@
   <header id="vote-header" class="w-full bg-white/90 backdrop-blur-md fixed top-0 left-0 z-40 border-b border-gray-200 shadow-sm transition-all">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
       
-      <!-- ซ้าย: โลโก้ และ ชื่อระบบ -->
       <div class="flex items-center gap-2.5 sm:gap-3">
         <img src="./logo.png" class="w-9 h-9 sm:w-11 sm:h-11 drop-shadow-sm object-contain" alt="โลโก้โรงเรียน">
         <h1 class="font-bold text-emerald-800 text-[14px] sm:text-lg tracking-wide leading-tight line-clamp-1">
@@ -64,7 +73,6 @@
         </h1>
       </div>
 
-      <!-- ขวา: ปุ่มจัดการเล็กๆ -->
       <div class="flex items-center gap-1.5 sm:gap-2">
         <button onclick="switchView('dashboard')" class="text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition flex items-center gap-1.5 font-medium border border-gray-200">
           📊 <span class="hidden sm:inline">หน้าสรุปผล</span>
@@ -81,20 +89,24 @@
   <div id="view-vote" class="w-full flex justify-center px-4 pt-24 pb-12 min-h-screen items-start">
     <main class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 sm:gap-8 items-start mx-auto">
       
-      <!-- ส่วนที่ 1: ผลโหวตปัจจุบัน (บนมือถือจะขึ้นก่อน: order-1 / บนคอมอยู่ขวา: lg:order-2) -->
+      <!-- ส่วนที่ 1: ผลโหวตปัจจุบัน (ตอนนี้ใช้เป็น Mini Podium แทนกราฟแท่ง) -->
       <section class="vote-card p-5 sm:p-8 flex flex-col h-full w-full order-1 lg:order-2">
-        <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
+        <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-4">
           <div><h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2></div>
           <div class="text-right">
-            <span id="total-votes" class="block font-bold text-4xl text-[var(--primary-yellow)] leading-none">0</span> 
+            <span id="total-votes" class="block font-bold text-4xl text-[var(--primary-yellow)] leading-none pt-1">0</span> 
             <span class="text-xs text-gray-500 block mt-1">โหวตทั้งหมด</span>
           </div>
         </div>
-        <div class="relative w-full mb-6" style="height:220px"><canvas id="results-chart"></canvas></div>
-        <div id="results-list" class="space-y-3 text-sm flex-grow max-h-[50vh] overflow-y-auto pr-1"></div>
+        
+        <!-- มินิโพเดียมสำหรับหน้าแรก -->
+        <div id="mini-podium" class="mini-podium-container w-full"></div>
+        
+        <!-- อันดับที่เหลือ -->
+        <div id="results-list" class="space-y-3 text-sm flex-grow max-h-[40vh] overflow-y-auto pr-1 mt-4"></div>
       </section>
 
-      <!-- ส่วนที่ 2: ฟอร์มโหวต (บนมือถือจะอยู่ล่าง: order-2 / บนคอมอยู่ซ้าย: lg:order-1) -->
+      <!-- ส่วนที่ 2: ฟอร์มโหวต -->
       <section class="vote-card p-5 sm:p-8 relative w-full flex flex-col order-2 lg:order-1">
         
         <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
@@ -123,7 +135,7 @@
     </main>
   </div>
 
-  <!-- หน้าจอ Dashboard (สไตล์เวทีประกวด) -->
+  <!-- หน้าจอ Dashboard (สไตล์เวทีประกวดใหญ่) -->
   <div id="view-dashboard" class="dashboard-view w-full">
     <div class="max-w-7xl mx-auto relative pt-4 pb-10">
       
@@ -136,10 +148,10 @@
       <!-- ส่วนหัว -->
       <div class="text-center mb-4 pt-4">
         <img src="./logo.png" class="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 rounded-3xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] border-[4px] border-white bg-white/60 backdrop-blur-sm object-contain p-1 transform transition hover:scale-105">
-        <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-teal-500 tracking-wide drop-shadow-sm mb-4">
+        <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-teal-500 tracking-wide drop-shadow-sm mb-5 leading-normal pb-2">
           สรุปผลโหวตเสื้อสูทแบบเรียลไทม์
         </h1>
-        <p class="text-emerald-800 mt-2 text-xl bg-white/70 inline-block px-6 py-2.5 rounded-full border border-emerald-100 backdrop-blur-md shadow-sm font-medium">
+        <p class="text-emerald-800 mt-2 text-xl bg-white/70 inline-block px-6 py-3 rounded-full border border-emerald-100 backdrop-blur-md shadow-sm font-medium">
           จำนวนผู้โหวตทั้งหมด: <span id="dash-total" class="text-emerald-600 font-bold text-3xl mx-2">0</span> คน
         </p>
       </div>
@@ -197,9 +209,8 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYTWNZ2AEW7-sYbDveS9GyYuLi8BCnri6sluOrfW7A8TJ-vtVCRsbOGy4dO9C3eM31oA/exec'; 
     const IMGBB_API_KEY = 'c924b331d25dfd52f01c19c5f21a6222'; 
     
-    const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
     const $ = id => document.getElementById(id);
-    let chart = null, currentOptions = [], currentResults = {};
+    let currentOptions = [], currentResults = {};
     let autoRefreshInterval = null;
 
     function switchView(view) {
@@ -253,29 +264,58 @@
       });
     }
 
-    function buildResultsView(options, votes) {
-      let counts = {}; options.forEach(opt => counts[opt.id] = 0);
-      votes.forEach(v => { if(counts[v] !== undefined) counts[v]++; });
-      currentResults = counts;
-      
-      $('total-votes').textContent = votes.length;
-      $('dash-total').textContent = votes.length; 
-      
-      const labels = options.map(opt => opt.label);
-      const dataValues = options.map(opt => counts[opt.id]);
-      const bgColors = options.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
+    // ฟังก์ชันสร้างมินิโพเดียมสำหรับหน้าแรกโหวต
+    function renderMiniPodium(sortedData) {
+      const container = $('mini-podium');
+      if(sortedData.length === 0) {
+        container.innerHTML = `<div class="text-gray-500 text-sm w-full text-center py-10">ยังไม่มีตัวเลือกให้โหวต</div>`;
+        return;
+      }
 
-      if (chart) { 
-        chart.data.labels = labels; chart.data.datasets[0].data = dataValues; chart.data.datasets[0].backgroundColor = bgColors; chart.update(); 
-      } else { 
-        chart = new Chart($('results-chart'), { type: 'bar', data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }, x: { display: false } } } }); 
-      }
+      const top1 = sortedData[0] || null;
+      const top2 = sortedData[1] || null;
+      const top3 = sortedData[2] || null;
+
+      let html = ``;
       
-      if($('view-dashboard').style.display === 'block') {
-        renderPageantDashboard();
+      // อันดับ 2
+      if(top2) {
+        html += `
+          <div class="mini-podium-item rank-2">
+            <div class="text-gray-800 text-xs sm:text-sm font-bold mb-1 truncate w-full px-1">${top2.label}</div>
+            <div class="text-gray-700 font-bold text-sm mb-2 bg-white px-2 py-1 rounded-full border border-gray-200 shadow-sm">${top2.votes} โหวต</div>
+            <img src="${top2.image}" class="podium-img !h-[70px] sm:!h-[90px] !mb-2 !p-1">
+            <div class="podium-base !h-[60px]"><span class="podium-rank-num !text-2xl">2</span></div>
+          </div>`;
+      } else { html += `<div class="mini-podium-item"></div>`; }
+
+      // อันดับ 1
+      if(top1) {
+        html += `
+          <div class="mini-podium-item rank-1 z-20">
+            <div class="text-3xl drop-shadow-md animate-bounce mb-1">👑</div>
+            <div class="text-gray-800 text-sm sm:text-base font-bold mb-1 truncate w-full px-1">${top1.label}</div>
+            <div class="text-emerald-700 font-bold text-sm sm:text-base mb-2 bg-white px-3 py-1 rounded-full border border-yellow-400 shadow-sm">${top1.votes} โหวต</div>
+            <img src="${top1.image}" class="podium-img !h-[90px] sm:!h-[120px] !mb-2 !p-1">
+            <div class="podium-base !h-[80px]"><span class="podium-rank-num !text-3xl">1</span></div>
+          </div>`;
       }
+
+      // อันดับ 3
+      if(top3) {
+        html += `
+          <div class="mini-podium-item rank-3">
+            <div class="text-gray-800 text-xs sm:text-sm font-bold mb-1 truncate w-full px-1">${top3.label}</div>
+            <div class="text-gray-700 font-bold text-sm mb-2 bg-white px-2 py-1 rounded-full border border-gray-200 shadow-sm">${top3.votes} โหวต</div>
+            <img src="${top3.image}" class="podium-img !h-[60px] sm:!h-[80px] !mb-2 !p-1">
+            <div class="podium-base !h-[50px]"><span class="podium-rank-num !text-xl">3</span></div>
+          </div>`;
+      } else { html += `<div class="mini-podium-item"></div>`; }
+
+      container.innerHTML = html;
     }
 
+    // ฟังก์ชันเวทีประกวดใหญ่ (แก้ไขให้ข้อความไม่ขาด Padding เพิ่มขึ้น)
     function renderPageantDashboard() {
       let sortedData = currentOptions.map(opt => ({
         ...opt,
@@ -299,8 +339,8 @@
       if(top2) {
         podiumHTML += `
           <div class="podium-item rank-2 transform transition hover:scale-105">
-            <div class="text-gray-800 text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-sm line-clamp-2">${top2.label}</div>
-            <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-4 py-1.5 rounded-full border border-gray-200 shadow-sm">${top2.votes} โหวต</div>
+            <div class="text-gray-800 text-lg sm:text-xl font-bold mb-3 break-words w-full px-2 drop-shadow-sm leading-relaxed">${top2.label}</div>
+            <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-5 py-2.5 rounded-full border border-gray-200 shadow-sm leading-normal">${top2.votes} โหวต</div>
             <img src="${top2.image}" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">2</span></div>
           </div>`;
@@ -309,9 +349,9 @@
       if(top1) {
         podiumHTML += `
           <div class="podium-item rank-1 transform transition hover:scale-105 z-20">
-            <div class="text-5xl sm:text-6xl drop-shadow-[0_5px_15px_rgba(255,215,0,0.5)] animate-bounce mb-2">👑</div>
-            <div class="text-gray-800 text-xl sm:text-2xl font-bold mb-2 break-words w-full px-2 drop-shadow-sm line-clamp-2">${top1.label}</div>
-            <div class="text-emerald-700 font-bold text-2xl sm:text-3xl mb-4 bg-white/95 px-6 py-2 rounded-full border-2 border-yellow-400 shadow-md">${top1.votes} โหวต</div>
+            <div class="text-5xl sm:text-6xl drop-shadow-[0_5px_15px_rgba(255,215,0,0.5)] animate-bounce mb-3">👑</div>
+            <div class="text-gray-800 text-xl sm:text-2xl font-bold mb-3 break-words w-full px-2 drop-shadow-sm leading-relaxed">${top1.label}</div>
+            <div class="text-emerald-700 font-bold text-2xl sm:text-3xl mb-4 bg-white/95 px-6 py-3 rounded-full border-2 border-yellow-400 shadow-md leading-normal">${top1.votes} โหวต</div>
             <img src="${top1.image}" class="podium-img shadow-xl">
             <div class="podium-base"><span class="podium-rank-num">1</span></div>
           </div>`;
@@ -320,8 +360,8 @@
       if(top3) {
         podiumHTML += `
           <div class="podium-item rank-3 transform transition hover:scale-105">
-            <div class="text-gray-800 text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-sm line-clamp-2">${top3.label}</div>
-            <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-4 py-1.5 rounded-full border border-gray-200 shadow-sm">${top3.votes} โหวต</div>
+            <div class="text-gray-800 text-lg sm:text-xl font-bold mb-3 break-words w-full px-2 drop-shadow-sm leading-relaxed">${top3.label}</div>
+            <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-5 py-2.5 rounded-full border border-gray-200 shadow-sm leading-normal">${top3.votes} โหวต</div>
             <img src="${top3.image}" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">3</span></div>
           </div>`;
@@ -337,7 +377,7 @@
             <div class="bg-white/80 backdrop-blur-sm border border-white rounded-xl p-3 flex flex-col items-center text-center transform transition hover:-translate-y-1 hover:shadow-lg shadow-sm">
               <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded mb-2 w-full text-left">อันดับ ${idx + 4}</span>
               <div class="w-full h-24 bg-gray-50 rounded-lg p-1 mb-2 overflow-hidden border border-gray-100"><img src="${runner.image}" class="w-full h-full object-contain"></div>
-              <div class="text-gray-700 font-medium text-sm line-clamp-1 w-full" title="${runner.label}">${runner.label}</div>
+              <div class="text-gray-700 font-medium text-sm line-clamp-1 w-full leading-relaxed" title="${runner.label}">${runner.label}</div>
               <div class="text-[var(--primary-green)] font-bold text-lg mt-1">${runner.votes} โหวต</div>
             </div>
           `;
@@ -354,16 +394,32 @@
         const res = await fetch(SCRIPT_URL);
         const data = await res.json();
         currentOptions = data.options;
-        buildVotingForm(data.options);
-        buildResultsView(data.options, data.votes);
         
-        let sortedOptions = [...data.options].map(opt => ({...opt, votes: currentResults[opt.id] || 0})).sort((a, b) => b.votes - a.votes);
+        buildVotingForm(data.options);
+        
+        // นับคะแนน
+        let counts = {}; data.options.forEach(opt => counts[opt.id] = 0);
+        data.votes.forEach(v => { if(counts[v] !== undefined) counts[v]++; });
+        currentResults = counts;
+        
+        $('total-votes').textContent = data.votes.length;
+        $('dash-total').textContent = data.votes.length; 
+        
+        let sortedOptions = [...data.options].map(opt => ({...opt, votes: counts[opt.id] || 0})).sort((a, b) => b.votes - a.votes);
+        
+        // สร้างมินิโพเดียมในหน้าโหวต
+        renderMiniPodium(sortedOptions);
+        
+        // รายชื่ออันดับ 4 เป็นต้นไปในหน้าโหวต
         $('results-list').innerHTML = '';
-        sortedOptions.forEach((opt, index) => {
-          let crown = index === 0 ? '👑 ' : '';
-          let color = index === 0 ? '#FFB800' : CHART_COLORS[index % CHART_COLORS.length];
-          $('results-list').innerHTML += `<div class="flex justify-between items-center bg-gray-50 border border-gray-100 p-3 rounded-xl hover:bg-gray-100 transition"><span class="flex items-center gap-2.5"><span class="w-4 h-4 rounded-full" style="background:${color}"></span><span class="text-gray-700 font-medium">${crown}${opt.label}</span></span><strong class="text-gray-900 text-base">${opt.votes} โหวต</strong></div>`;
+        const runnersList = sortedOptions.slice(3);
+        runnersList.forEach((opt, index) => {
+          $('results-list').innerHTML += `<div class="flex justify-between items-center bg-gray-50 border border-gray-100 p-3 rounded-xl hover:bg-gray-100 transition"><span class="flex items-center gap-2.5"><span class="w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-bold">${index + 4}</span><span class="text-gray-700 font-medium">${opt.label}</span></span><strong class="text-gray-900 text-base">${opt.votes} โหวต</strong></div>`;
         });
+
+        if($('view-dashboard').style.display === 'block') {
+          renderPageantDashboard();
+        }
 
       } catch (e) { console.log(e); } 
       finally { $('loading').classList.add('hidden'); }
