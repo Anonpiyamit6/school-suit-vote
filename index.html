@@ -31,25 +31,24 @@
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
     .btn-submit:disabled { opacity: 0.6; cursor: wait; }
     
-    /* สไตล์สำหรับหน้าจอ Dashboard ประกวด แก้ไขความสูงตรงนี้ */
-    .dashboard-view { display: none; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); min-height: 100vh; color: white; padding: 20px; overflow-y: auto;}
+    /* สไตล์สำหรับหน้าจอ Dashboard ประกวด (สีพาสเทลเขียว) */
+    .dashboard-view { display: none; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); min-height: 100vh; color: #1f2937; padding: 20px; overflow-y: auto;}
     
-    /* ปรับความสูงเป็น 550px และเพิ่ม margin-top ให้ไม่ชนด้านบน */
     .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 40px; height: 550px; }
-    
     .podium-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 28%; position: relative; text-align: center; }
-    .podium-img { width: 100%; height: 160px; object-fit: contain; background: white; border-radius: 16px; padding: 10px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; transition: transform 0.3s; }
     
-    .rank-1 .podium-img { border: 4px solid #FFD700; height: 200px; box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
-    .rank-2 .podium-img { border: 4px solid #C0C0C0; height: 160px; box-shadow: 0 0 30px rgba(192, 192, 192, 0.4); }
-    .rank-3 .podium-img { border: 4px solid #CD7F32; height: 140px; box-shadow: 0 0 30px rgba(205, 127, 50, 0.4); }
+    .podium-img { width: 100%; height: 160px; object-fit: contain; background: white; border-radius: 16px; padding: 10px; margin-bottom: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); z-index: 10; transition: transform 0.3s; }
     
-    .podium-base { width: 100%; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 15px; color: #111; font-weight: bold; position: relative; overflow: hidden;}
-    .rank-1 .podium-base { height: 160px; background: linear-gradient(180deg, #FFD700 0%, #B8860B 100%); }
-    .rank-2 .podium-base { height: 120px; background: linear-gradient(180deg, #E0E0E0 0%, #A9A9A9 100%); }
-    .rank-3 .podium-base { height: 90px; background: linear-gradient(180deg, #FFA07A 0%, #CD7F32 100%); }
+    .rank-1 .podium-img { border: 4px solid #FFD700; height: 200px; box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3); }
+    .rank-2 .podium-img { border: 4px solid #C0C0C0; height: 160px; box-shadow: 0 10px 30px rgba(192, 192, 192, 0.4); }
+    .rank-3 .podium-img { border: 4px solid #CD7F32; height: 140px; box-shadow: 0 10px 30px rgba(205, 127, 50, 0.4); }
     
-    .podium-rank-num { font-size: 3rem; line-height: 1; opacity: 0.9; text-shadow: 0 2px 4px rgba(255,255,255,0.5); }
+    .podium-base { width: 100%; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 15px; color: #111; font-weight: bold; position: relative; overflow: hidden; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);}
+    .rank-1 .podium-base { height: 160px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 100%); }
+    .rank-2 .podium-base { height: 120px; background: linear-gradient(180deg, #E8E8E8 0%, #B0C4DE 100%); }
+    .rank-3 .podium-base { height: 90px; background: linear-gradient(180deg, #FFB38A 0%, #CD853F 100%); }
+    
+    .podium-rank-num { font-size: 3rem; line-height: 1; opacity: 0.9; color: #1f2937; text-shadow: 0 2px 4px rgba(255,255,255,0.6); }
     .rank-1 .podium-rank-num { font-size: 4.5rem; }
 
     .modal-overlay { animation: fadeIn 0.2s ease-out forwards; }
@@ -114,24 +113,26 @@
     </main>
   </div>
 
-  <!-- หน้าจอ Dashboard (สไตล์เวทีประกวด) -->
+  <!-- หน้าจอ Dashboard (สไตล์เวทีประกวด พาสเทลเขียว) -->
   <div id="view-dashboard" class="dashboard-view w-full">
     <div class="max-w-7xl mx-auto relative pt-4 pb-10">
       
       <!-- ปุ่มควบคุม -->
       <div class="absolute top-0 right-0 flex gap-3 z-50">
-        <button onclick="toggleFullScreen()" class="bg-gray-800 hover:bg-gray-700 border border-gray-600 px-4 py-2 rounded-lg text-sm font-semibold transition">⛶ ขยายเต็มจอ</button>
-        <button onclick="switchView('vote')" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg text-sm font-semibold transition shadow-[0_0_15px_rgba(220,38,38,0.5)]">✕ ปิดหน้าโชว์ผล</button>
+        <button onclick="toggleFullScreen()" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold transition shadow-sm">⛶ ขยายเต็มจอ</button>
+        <button onclick="switchView('vote')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md">✕ ปิดหน้าโชว์ผล</button>
       </div>
 
       <!-- ส่วนหัว -->
       <div class="text-center mb-4 pt-4">
-        <img src="./logo.png" class="w-20 h-20 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-        <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 tracking-wide drop-shadow-lg mb-3">
+        <!-- โลโก้ปรับใหม่: โค้งมน มีมิติ -->
+        <img src="./logo.png" class="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 rounded-3xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] border-[4px] border-white bg-white/60 backdrop-blur-sm object-contain p-1 transform transition hover:scale-105">
+        
+        <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-teal-500 tracking-wide drop-shadow-sm mb-4">
           สรุปผลโหวตเสื้อสูทแบบเรียลไทม์
         </h1>
-        <p class="text-gray-300 mt-2 text-xl bg-gray-900/50 inline-block px-6 py-2 rounded-full border border-gray-700 backdrop-blur-sm">
-          จำนวนผู้โหวตทั้งหมด: <span id="dash-total" class="text-yellow-400 font-bold text-3xl mx-2">0</span> คน
+        <p class="text-emerald-800 mt-2 text-xl bg-white/70 inline-block px-6 py-2.5 rounded-full border border-emerald-100 backdrop-blur-md shadow-sm font-medium">
+          จำนวนผู้โหวตทั้งหมด: <span id="dash-total" class="text-emerald-600 font-bold text-3xl mx-2">0</span> คน
         </p>
       </div>
 
@@ -142,8 +143,8 @@
 
       <!-- อันดับที่เหลือ (Runner-ups) -->
       <div class="max-w-5xl mx-auto">
-        <h3 class="text-xl text-gray-400 text-center mb-6 font-semibold flex items-center justify-center gap-4">
-          <span class="h-px bg-gray-700 flex-grow"></span> อันดับที่เหลือ <span class="h-px bg-gray-700 flex-grow"></span>
+        <h3 class="text-xl text-emerald-700 text-center mb-6 font-semibold flex items-center justify-center gap-4">
+          <span class="h-px bg-emerald-200 flex-grow"></span> อันดับที่เหลือ <span class="h-px bg-emerald-200 flex-grow"></span>
         </h3>
         <div id="dashboard-runners" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           <!-- จะถูกสร้างโดย JavaScript -->
@@ -267,7 +268,7 @@
       }
     }
 
-    // ฟังก์ชันเวทีประกวด (แก้ไขการจัดวางตัวหนังสือแล้ว)
+    // ฟังก์ชันเวทีประกวด (ปรับแต่งสีตัวหนังสือและกล่องให้เข้ากับพื้นพาสเทล)
     function renderPageantDashboard() {
       let sortedData = currentOptions.map(opt => ({
         ...opt,
@@ -278,7 +279,7 @@
       const runnersContainer = $('dashboard-runners');
       
       if(sortedData.length === 0) {
-        podiumContainer.innerHTML = `<div class="text-gray-400 text-xl w-full text-center">ยังไม่มีตัวเลือกให้โหวต</div>`;
+        podiumContainer.innerHTML = `<div class="text-gray-500 text-xl w-full text-center">ยังไม่มีตัวเลือกให้โหวต</div>`;
         return;
       }
 
@@ -292,23 +293,23 @@
       if(top2) {
         podiumHTML += `
           <div class="podium-item rank-2 transform transition hover:scale-105">
-            <div class="text-white text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-md line-clamp-2">${top2.label}</div>
-            <div class="text-[#E0E0E0] font-bold text-xl sm:text-2xl mb-4 bg-black/40 px-4 py-1 rounded-full border border-gray-600">${top2.votes} โหวต</div>
-            <img src="${top2.image}" class="podium-img">
+            <div class="text-gray-800 text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-sm line-clamp-2">${top2.label}</div>
+            <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-4 py-1.5 rounded-full border border-gray-200 shadow-sm">${top2.votes} โหวต</div>
+            <img src="${top2.image}" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">2</span></div>
           </div>`;
       } else {
         podiumHTML += `<div class="podium-item"></div>`;
       }
 
-      // อันดับ 1 (เอามงกุฎออกจาก Absolute ให้เรียงต่อกันปกติ)
+      // อันดับ 1
       if(top1) {
         podiumHTML += `
           <div class="podium-item rank-1 transform transition hover:scale-105 z-20">
-            <div class="text-5xl sm:text-6xl drop-shadow-[0_0_15px_rgba(255,215,0,0.8)] animate-bounce mb-2">👑</div>
-            <div class="text-white text-xl sm:text-2xl font-bold mb-2 break-words w-full px-2 drop-shadow-lg line-clamp-2">${top1.label}</div>
-            <div class="text-[#FFD700] font-bold text-2xl sm:text-3xl mb-4 bg-black/60 px-5 py-1.5 rounded-full border border-yellow-600/50 shadow-lg">${top1.votes} โหวต</div>
-            <img src="${top1.image}" class="podium-img">
+            <div class="text-5xl sm:text-6xl drop-shadow-[0_5px_15px_rgba(255,215,0,0.5)] animate-bounce mb-2">👑</div>
+            <div class="text-gray-800 text-xl sm:text-2xl font-bold mb-2 break-words w-full px-2 drop-shadow-sm line-clamp-2">${top1.label}</div>
+            <div class="text-emerald-700 font-bold text-2xl sm:text-3xl mb-4 bg-white/95 px-6 py-2 rounded-full border-2 border-yellow-400 shadow-md">${top1.votes} โหวต</div>
+            <img src="${top1.image}" class="podium-img shadow-xl">
             <div class="podium-base"><span class="podium-rank-num">1</span></div>
           </div>`;
       }
@@ -317,9 +318,9 @@
       if(top3) {
         podiumHTML += `
           <div class="podium-item rank-3 transform transition hover:scale-105">
-            <div class="text-white text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-md line-clamp-2">${top3.label}</div>
-            <div class="text-[#FFA07A] font-bold text-xl sm:text-2xl mb-4 bg-black/40 px-4 py-1 rounded-full border border-gray-600">${top3.votes} โหวต</div>
-            <img src="${top3.image}" class="podium-img">
+            <div class="text-gray-800 text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-sm line-clamp-2">${top3.label}</div>
+            <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-4 py-1.5 rounded-full border border-gray-200 shadow-sm">${top3.votes} โหวต</div>
+            <img src="${top3.image}" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">3</span></div>
           </div>`;
       } else {
@@ -334,17 +335,17 @@
         let runnersHTML = '';
         runners.forEach((runner, idx) => {
           runnersHTML += `
-            <div class="bg-gray-800 border border-gray-700 rounded-xl p-3 flex flex-col items-center text-center transform transition hover:-translate-y-1 hover:border-gray-500">
-              <span class="bg-gray-700 text-gray-300 text-xs font-bold px-2 py-1 rounded mb-2 w-full text-left">อันดับ ${idx + 4}</span>
-              <div class="w-full h-24 bg-white rounded-lg p-1 mb-2 overflow-hidden"><img src="${runner.image}" class="w-full h-full object-contain"></div>
-              <div class="text-white font-medium text-sm line-clamp-1 w-full" title="${runner.label}">${runner.label}</div>
+            <div class="bg-white/80 backdrop-blur-sm border border-white rounded-xl p-3 flex flex-col items-center text-center transform transition hover:-translate-y-1 hover:shadow-lg shadow-sm">
+              <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded mb-2 w-full text-left">อันดับ ${idx + 4}</span>
+              <div class="w-full h-24 bg-gray-50 rounded-lg p-1 mb-2 overflow-hidden border border-gray-100"><img src="${runner.image}" class="w-full h-full object-contain"></div>
+              <div class="text-gray-700 font-medium text-sm line-clamp-1 w-full" title="${runner.label}">${runner.label}</div>
               <div class="text-[var(--primary-green)] font-bold text-lg mt-1">${runner.votes} โหวต</div>
             </div>
           `;
         });
         runnersContainer.innerHTML = runnersHTML;
       } else {
-        runnersContainer.innerHTML = `<div class="col-span-full text-center text-gray-500">ไม่มีตัวเลือกอื่นแล้ว</div>`;
+        runnersContainer.innerHTML = `<div class="col-span-full text-center text-gray-500 font-medium">ไม่มีตัวเลือกอื่นแล้ว</div>`;
       }
     }
 
