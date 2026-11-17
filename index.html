@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ระบบโหวตสีเสื้อสูทโรงเรียน</title>
+  <title>ระบบโหวตเสื้อสูทโรงเรียน</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -11,62 +11,50 @@
     :root { --primary-green: #89C040; --primary-yellow: #FFB800; --text-dark: #2D3748; }
     body { font-family: "IBM Plex Sans Thai", sans-serif; background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
     
-    /* สไตล์กล่องหลัก */
     .vote-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
     
-    /* สไตล์ตัวเลือก */
     .choice { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 16px; background: #fff; cursor: pointer; transition: all 0.2s; }
     .choice:hover { border-color: var(--primary-green); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
     .choice:has(input:checked) { border-color: var(--primary-green); background: #F0F9E8; }
     .choice input { accent-color: var(--primary-green); width: 22px; height: 22px; flex-shrink: 0; }
     
-    /* สไตล์รูปภาพ */
-    .choice-img-container { width: 100%; height: 160px; position: relative; overflow: hidden; border-radius: 10px; border: 1px solid #f0f0f0; background: #f9f9f9; }
-    .choice-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+    .choice-img-container { width: 100%; height: 200px; position: relative; overflow: hidden; border-radius: 10px; border: 1px solid #f0f0f0; background: #f9f9f9; }
+    .choice-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s; }
     .choice-img-container:hover .choice-img { transform: scale(1.05); }
     .zoom-hint { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 6px; font-size: 12px; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;}
     
-    /* สไตล์ทั่วไป */
-    .swatch { width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: inline-block; flex-shrink: 0; }
     .field { width: 100%; border: 2px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; transition: border-color 0.2s; }
     .field:focus { outline: none; border-color: var(--primary-green); }
     .btn-submit { background: var(--primary-green); color: white; transition: all 0.2s; }
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
     .btn-submit:disabled { opacity: 0.6; cursor: wait; }
-    
-    /* แอนิเมชันตอนเปิด Modal */
     .modal-overlay { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body class="w-full flex justify-center p-4 sm:p-6">
 
-  <!-- ปุ่มตั้งค่าแอดมิน มุมขวาล่าง -->
-  <button onclick="openAdmin()" class="fixed bottom-4 right-4 bg-white/80 backdrop-blur text-gray-400 hover:text-[var(--primary-yellow)] p-3 rounded-full shadow-lg border border-gray-100 z-40 transition-all hover:scale-110" title="จัดการระบบ (Admin)">
+  <!-- ปุ่มแอดมิน -->
+  <button onclick="openAdmin()" class="fixed bottom-4 right-4 bg-white/80 backdrop-blur text-gray-400 hover:text-[var(--primary-yellow)] p-3 rounded-full shadow-lg border border-gray-100 z-40 transition-all hover:scale-110">
     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
   </button>
 
-  <!-- เลย์เอาต์หลัก ใช้ Grid (ในมือถือ ผลโหวตอยู่บน กล่องโหวตอยู่ล่าง | ในคอม แบ่งซ้ายขวา) -->
   <main class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-start my-auto">
     
-    <!-- ฝั่งโหวต (order-2 ในมือถือให้อยู่ล่าง, md:order-1 ในคอมให้อยู่ซ้าย) -->
+    <!-- ฝั่งโหวต -->
     <section class="vote-card p-6 sm:p-8 relative w-full order-2 md:order-1">
-      
-      <!-- หน้าจอโหลดดิ้งตอนเปิดเว็บ -->
       <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
         <div class="w-12 h-12 border-4 border-gray-100 border-t-[var(--primary-green)] rounded-full animate-spin"></div>
         <p class="mt-4 text-gray-600 font-medium animate-pulse">กำลังโหลดข้อมูลจากระบบ...</p>
       </div>
 
       <div class="text-center mb-6">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">โหวตสีเสื้อสูทโรงเรียน</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">โหวตเสื้อสูทโรงเรียน</h1>
         <p class="text-gray-500 mt-2 text-sm sm:text-base">กรุณากรอกชื่อและเลือกแบบที่คุณชื่นชอบที่สุด</p>
       </div>
       
-      <!-- แจ้งเตือนสถานะ -->
       <div id="notice" class="hidden mb-5 rounded-xl px-4 py-3 font-medium text-sm text-center transition-all"></div>
       
-      <!-- ฟอร์มโหวต -->
       <form id="vote-form">
         <div class="mb-5">
           <label class="block font-semibold mb-2 text-sm text-gray-700">ชื่อ-นามสกุล (ผู้โหวต)</label>
@@ -75,7 +63,6 @@
         
         <fieldset>
           <legend class="font-semibold mb-3 text-sm text-gray-700">เลือกแบบเสื้อสูท</legend>
-          <!-- กล่องตัวเลือกจะสร้างตรงนี้ -->
           <div id="dynamic-choices" class="grid sm:grid-cols-2 gap-4"></div>
         </fieldset>
         
@@ -85,7 +72,7 @@
       </form>
     </section>
 
-    <!-- ฝั่งสรุปผล (order-1 ในมือถือให้อยู่บน, md:order-2 ในคอมให้อยู่ขวา) -->
+    <!-- ฝั่งสรุปผล -->
     <section class="vote-card p-6 sm:p-8 flex flex-col h-full w-full order-1 md:order-2">
       <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
         <div>
@@ -97,134 +84,93 @@
           <span class="text-xs text-gray-500 block mt-1">โหวตทั้งหมด</span>
         </div>
       </div>
-      
-      <!-- กราฟแท่ง -->
       <div class="relative w-full mb-6" style="height:220px">
         <canvas id="results-chart"></canvas>
       </div>
-      
-      <!-- สรุปตัวเลข -->
       <div id="results-list" class="space-y-3 text-sm flex-grow"></div>
     </section>
   </main>
 
-  <!-- หน้าต่างขยายรูปภาพ (Image Modal) -->
+  <!-- Modal ขยายรูป -->
   <div id="image-modal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('image-modal')">
     <div class="relative max-w-2xl w-full flex justify-center flex-col items-center" onclick="event.stopPropagation()">
-      <button onclick="closeModal('image-modal')" class="absolute -top-12 right-0 text-white hover:text-[var(--primary-yellow)] bg-black/50 rounded-full p-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
+      <button onclick="closeModal('image-modal')" class="absolute -top-12 right-0 text-white bg-black/50 rounded-full p-2">✕</button>
       <img id="modal-img" src="" class="rounded-xl shadow-2xl max-h-[80vh] max-w-full object-contain bg-white">
     </div>
   </div>
 
-  <!-- หน้าต่างจัดการระบบแอดมิน (Admin Modal) -->
+  <!-- Admin Modal (ตัดเลือกรหัสสีออกแล้ว) -->
   <div id="admin-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('admin-modal')">
     <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative" onclick="event.stopPropagation()">
-      <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 bg-gray-100 rounded-full p-1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-      <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-gray-800">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
-        ระบบจัดการ (Admin)
-      </h2>
+      <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1">✕</button>
+      <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-gray-800">ระบบจัดการ (Admin)</h2>
       
       <div class="space-y-5">
-        <button onclick="downloadCSV()" class="w-full bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-semibold py-3 rounded-xl border border-yellow-200 flex justify-center items-center gap-2 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-          ดาวน์โหลดสรุปผล (CSV)
+        <button onclick="downloadCSV()" class="w-full bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-semibold py-3 rounded-xl border border-yellow-200">
+          📥 ดาวน์โหลดสรุปผล (CSV)
         </button>
-        
         <div class="border-t border-gray-200"></div>
-        
-        <h3 class="font-bold text-gray-700 text-lg">เพิ่มตัวเลือกสีใหม่</h3>
+        <h3 class="font-bold text-gray-700 text-lg">เพิ่มตัวเลือกใหม่</h3>
         <div id="admin-msg" class="text-sm hidden p-3 rounded-lg text-center font-medium"></div>
         
         <form id="add-option-form" class="space-y-4">
           <div>
-            <label class="text-sm font-semibold text-gray-600 block mb-1">ชื่อสีเสื้อ</label>
-            <input type="text" id="opt-name" class="field" placeholder="เช่น สีเขียวมะกอก" required>
+            <label class="text-sm font-semibold text-gray-600 block mb-1">ชื่อเรียกเสื้อสูท</label>
+            <input type="text" id="opt-name" class="field" placeholder="เช่น แบบที่ 1, สไตล์เกาหลี" required>
           </div>
           <div>
-            <label class="text-sm font-semibold text-gray-600 block mb-1">รหัสสี (กดที่แถบสีเพื่อดูดสี)</label>
-            <input type="color" id="opt-hex" class="w-full h-12 rounded-lg cursor-pointer border-2 border-gray-200 p-1" value="#89C040">
+            <label class="text-sm font-semibold text-gray-600 block mb-1">รูปตัวอย่างเสื้อ (จำเป็นต้องใส่)</label>
+            <input type="file" id="opt-img" accept="image/*" required class="w-full text-sm file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
           </div>
-          <div>
-            <label class="text-sm font-semibold text-gray-600 block mb-1">รูปตัวอย่างเสื้อ (ถ้ามี)</label>
-            <input type="file" id="opt-img" accept="image/*" class="w-full text-sm file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
-          </div>
-          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-3 rounded-xl font-bold mt-2">
-            บันทึกตัวเลือกใหม่เข้าสู่ระบบ
-          </button>
+          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-3 rounded-xl font-bold mt-2">บันทึกเข้าสู่ระบบ</button>
         </form>
       </div>
     </div>
   </div>
 
   <script>
-    // ===== รหัส API ของคุณ ไม่ต้องแก้แล้วครับ ผมใส่ให้แล้ว =====
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQJtKe9kE0c5ojkvgm2fE2BpoeMl9-VjCtHaIXdjLblUhEfNYhOZMeq3F8rpfQl9bCQA/exec'; 
-    // =======================================================
+    // ===== เปลี่ยนตรงนี้เป็น URL ใหม่ล่าสุดของคุณ =====
+    const SCRIPT_URL = 'YOUR_NEW_WEB_APP_URL_HERE'; 
+    // ===========================================
+
+    // พาเลทสีสำหรับกราฟ (เพราะเราตัดการเลือกรหัสสีออกแล้ว จึงต้องสุ่มสีให้กราฟ)
+    const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
 
     const $ = id => document.getElementById(id);
     let chart = null, currentOptions = [], currentResults = {};
 
-    // จัดการแสดงข้อความแจ้งเตือน
     function showNotice(msg, error = false) {
       $('notice').textContent = msg;
-      $('notice').className = error 
-        ? 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-red-100 text-red-700 border border-red-200' 
-        : 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-green-100 text-green-700 border border-green-200';
+      $('notice').className = error ? 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-red-100 text-red-700' : 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-green-100 text-green-700';
       $('notice').classList.remove('hidden');
       setTimeout(() => $('notice').classList.add('hidden'), 5000);
     }
 
-    // จัดการรูปภาพ (ขยาย/ปิด)
-    function openModal(e, src) { 
-      e.preventDefault(); e.stopPropagation(); 
-      $('modal-img').src = src; 
-      $('image-modal').classList.remove('hidden'); 
-    }
+    function openModal(e, src) { e.preventDefault(); e.stopPropagation(); $('modal-img').src = src; $('image-modal').classList.remove('hidden'); }
     function closeModal(id) { $(id).classList.add('hidden'); }
     
-    // จัดการแอดมินพาสเวิร์ด
     function openAdmin() {
-      const pin = prompt("กรุณาใส่รหัสผ่านแอดมิน (ค่าเริ่มต้น: 1234)");
-      if(pin === "1234") { 
-        $('admin-modal').classList.remove('hidden');
-      } else if(pin !== null) {
-        alert("รหัสผ่านไม่ถูกต้องครับ");
-      }
+      const pin = prompt("รหัสผ่านแอดมิน (1234)");
+      if(pin === "1234") $('admin-modal').classList.remove('hidden');
     }
 
-    // สร้างกล่องตัวเลือก (อัปเดตจาก Google Sheet)
     function buildVotingForm(options) {
       const container = $('dynamic-choices');
-      container.innerHTML = options.length ? '' : '<p class="text-red-500 text-sm col-span-2 text-center p-4 bg-red-50 rounded-lg">แอดมินยังไม่ได้ตั้งค่าตัวเลือกสี กรุณากดปุ่ม ⚙️ มุมขวาล่างเพื่อตั้งค่า</p>';
+      container.innerHTML = options.length ? '' : '<p class="text-red-500 text-sm col-span-2 text-center p-4 bg-red-50 rounded-lg">แอดมินยังไม่ได้ตั้งค่าตัวเลือก</p>';
       
       options.forEach(opt => {
-        let imgHtml = opt.image 
-          ? `<div class="choice-img-container cursor-zoom-in" onclick="openModal(event, '${opt.image}')">
-               <img src="${opt.image}" class="choice-img" loading="lazy">
-               <div class="zoom-hint">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> ขยายดูรูป
-               </div>
-             </div>` 
-          : '';
-        
+        let imgHtml = opt.image ? `<div class="choice-img-container cursor-zoom-in" onclick="openModal(event, '${opt.image}')"><img src="${opt.image}" class="choice-img" loading="lazy"><div class="zoom-hint">🔍 ขยาย</div></div>` : '';
         container.innerHTML += `
           <label class="choice group">
             ${imgHtml}
             <div class="flex items-center gap-3 w-full mt-1">
               <input type="radio" name="color-choice" value="${opt.id}" required>
-              <span class="swatch" style="background:${opt.hex}"></span>
-              <span class="font-semibold text-gray-700 group-hover:text-gray-900">${opt.label}</span>
+              <span class="font-semibold text-gray-700 group-hover:text-gray-900 text-lg ml-1">${opt.label}</span>
             </div>
           </label>`;
       });
     }
 
-    // สร้างกราฟและตัวเลข
     function buildResultsView(options, votes) {
       let counts = {};
       options.forEach(opt => counts[opt.id] = 0);
@@ -234,12 +180,13 @@
       $('total-votes').textContent = votes.length;
       $('results-list').innerHTML = '';
       
-      options.forEach(opt => {
+      options.forEach((opt, index) => {
+        let color = CHART_COLORS[index % CHART_COLORS.length];
         $('results-list').innerHTML += `
           <div class="flex justify-between items-center bg-gray-50 border border-gray-100 p-3 rounded-xl">
             <span class="flex items-center gap-2.5">
-              <span class="w-4 h-4 rounded-full shadow-sm" style="background:${opt.hex}"></span>
-              <span class="text-gray-700">${opt.label}</span>
+              <span class="w-4 h-4 rounded-full shadow-sm" style="background:${color}"></span>
+              <span class="text-gray-700 font-medium">${opt.label}</span>
             </span>
             <strong class="text-gray-900 text-base">${counts[opt.id]} โหวต</strong>
           </div>`;
@@ -247,30 +194,19 @@
 
       const labels = options.map(opt => opt.label);
       const dataValues = options.map(opt => counts[opt.id]);
-      const bgColors = options.map(opt => opt.hex);
+      const bgColors = options.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
 
       if (chart) { 
-        chart.data.labels = labels; 
-        chart.data.datasets[0].data = dataValues; 
-        chart.data.datasets[0].backgroundColor = bgColors; 
-        chart.update(); 
+        chart.data.labels = labels; chart.data.datasets[0].data = dataValues; chart.data.datasets[0].backgroundColor = bgColors; chart.update(); 
       } else { 
         chart = new Chart($('results-chart'), { 
           type: 'bar', 
           data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 6, maxBarThickness: 50 }] }, 
-          options: { 
-            responsive: true, maintainAspectRatio: false, 
-            plugins: { legend: { display: false } }, 
-            scales: { 
-              y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }, 
-              x: { grid: { display: false } } 
-            } 
-          } 
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }, x: { grid: { display: false } } } } 
         }); 
       }
     }
 
-    // ดึงข้อมูลหลักจาก Apps Script
     async function loadData() {
       try {
         $('loading').classList.remove('hidden');
@@ -279,98 +215,73 @@
         currentOptions = data.options;
         buildVotingForm(data.options);
         buildResultsView(data.options, data.votes);
-      } catch (e) { 
-        showNotice('เชื่อมต่อฐานข้อมูลไม่สำเร็จ กรุณารีเฟรชหน้าเว็บใหม่', true); 
-      } finally { 
-        $('loading').classList.add('hidden'); 
-      }
+      } catch (e) { showNotice('เชื่อมต่อไม่สำเร็จ กรุณารีเฟรช', true); } 
+      finally { $('loading').classList.add('hidden'); }
     }
 
-    // เมื่อกดยืนยันโหวต
     $('vote-form').addEventListener('submit', async e => {
       e.preventDefault();
       const choice = document.querySelector('input[name="color-choice"]:checked');
       if (!choice) return;
-      
-      $('submit-button').disabled = true; 
-      $('submit-button').innerHTML = 'กำลังบันทึกคะแนน...';
-      
+      $('submit-button').disabled = true; $('submit-button').innerHTML = 'กำลังบันทึก...';
       try {
-        await fetch(SCRIPT_URL, { 
-          method: 'POST', 
-          body: JSON.stringify({ action: 'vote', voter_name: $('voter-name').value.trim(), color_choice: choice.value }) 
-        });
-        showNotice('บันทึกผลโหวตเรียบร้อย ขอบคุณครับ!'); 
-        $('vote-form').reset(); 
-        loadData(); // อัปเดตกราฟ
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // เลื่อนขึ้นไปดูผลโหวตบนสุด
-      } catch (err) { 
-        showNotice('เกิดข้อผิดพลาดในการส่งข้อมูล', true); 
-      } finally { 
-        $('submit-button').disabled = false; 
-        $('submit-button').innerHTML = 'ส่งผลโหวต'; 
-      }
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'vote', voter_name: $('voter-name').value.trim(), color_choice: choice.value }) });
+        showNotice('โหวตเรียบร้อย ขอบคุณครับ!'); $('vote-form').reset(); loadData(); window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) { showNotice('เกิดข้อผิดพลาด', true); } 
+      finally { $('submit-button').disabled = false; $('submit-button').innerHTML = 'ส่งผลโหวต'; }
     });
 
-    // แอดมิน: เพิ่มตัวเลือก
     $('add-option-form').addEventListener('submit', async e => {
       e.preventDefault();
-      $('btn-save-opt').disabled = true; 
-      $('btn-save-opt').innerHTML = 'กำลังอัปโหลดข้อมูล (อาจใช้เวลาสักครู่)...';
+      $('btn-save-opt').disabled = true; $('btn-save-opt').innerHTML = 'กำลังอัปโหลดรูปลงระบบ (กรุณารอ)...';
       
       const file = $('opt-img').files[0];
-      const payload = {
-        action: 'addOption',
-        colorName: $('opt-name').value,
-        hexCode: $('opt-hex').value,
-        imageFile: null, imageName: null, mimeType: null
-      };
+      const payload = { action: 'addOption', colorName: $('opt-name').value, imageFile: null, imageName: null, mimeType: null };
 
-      const sendToAppsScript = async () => {
-        try {
-          await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-          $('admin-msg').textContent = "เพิ่มสีเรียบร้อยแล้ว!"; 
-          $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
-          $('add-option-form').reset(); 
-          loadData();
-          setTimeout(() => $('admin-msg').classList.add('hidden'), 4000);
-        } catch(e) { 
-          $('admin-msg').textContent = "เกิดข้อผิดพลาด กรุณาลองใหม่"; 
-          $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
-        } finally { 
-          $('btn-save-opt').disabled = false; 
-          $('btn-save-opt').innerHTML = 'บันทึกตัวเลือกใหม่เข้าสู่ระบบ'; 
-        }
-      };
-
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          payload.imageFile = event.target.result.split(',')[1];
+      // ย่อขนาดรูปก่อนส่ง ป้องกัน Google Script Error
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = async function() {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800; // ย่อขนาดให้ไม่เกิน 800px เพื่อให้อัปโหลดผ่านชัวร์ๆ
+          const scaleSize = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleSize;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          payload.imageFile = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
           payload.imageName = file.name;
-          payload.mimeType = file.type;
-          sendToAppsScript();
-        };
-        reader.readAsDataURL(file);
-      } else {
-        sendToAppsScript();
-      }
+          payload.mimeType = 'image/jpeg';
+          
+          try {
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+            const result = await response.json();
+            if(result.status === 'success') {
+              $('admin-msg').textContent = "เพิ่มเรียบร้อยแล้ว!"; $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
+              $('add-option-form').reset(); loadData();
+            } else {
+              throw new Error(result.msg);
+            }
+          } catch(err) { 
+            $('admin-msg').textContent = "เกิดข้อผิดพลาดในการอัปโหลด"; $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
+          } finally { 
+            $('btn-save-opt').disabled = false; $('btn-save-opt').innerHTML = 'บันทึกเข้าสู่ระบบ'; 
+          }
+        }
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
     });
 
-    // แอดมิน: ดาวน์โหลด CSV
     function downloadCSV() {
-      if(currentOptions.length === 0) return alert('ยังไม่มีข้อมูลการโหวต');
-      let csv = "data:text/csv;charset=utf-8,\uFEFFID,ชื่อสีเสื้อ,จำนวนโหวต\n";
+      if(currentOptions.length === 0) return alert('ยังไม่มีข้อมูล');
+      let csv = "data:text/csv;charset=utf-8,\uFEFFID,ชื่อเสื้อ,จำนวนโหวต\n";
       currentOptions.forEach(opt => csv += `"${opt.id}","${opt.label}",${currentResults[opt.id]||0}\n`);
-      const link = document.createElement("a"); 
-      link.href = encodeURI(csv); 
-      link.download = "สรุปผลโหวตเสื้อสูท.csv"; 
-      document.body.appendChild(link); 
-      link.click(); 
-      document.body.removeChild(link);
+      const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "สรุปผลโหวต.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
-    // สั่งโหลดข้อมูลครั้งแรกตอนเปิดหน้าเว็บ
     loadData();
   </script>
 </body>
