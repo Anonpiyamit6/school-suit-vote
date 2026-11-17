@@ -31,11 +31,12 @@
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
     .btn-submit:disabled { opacity: 0.6; cursor: wait; }
     
-    /* สไตล์สำหรับหน้าจอ Dashboard ประกวด */
+    /* สไตล์สำหรับหน้าจอ Dashboard ประกวด แก้ไขความสูงตรงนี้ */
     .dashboard-view { display: none; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); min-height: 100vh; color: white; padding: 20px; overflow-y: auto;}
     
-    /* แท่นโพเดียม Top 3 */
-    .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 20px; height: 400px; }
+    /* ปรับความสูงเป็น 550px และเพิ่ม margin-top ให้ไม่ชนด้านบน */
+    .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 40px; height: 550px; }
+    
     .podium-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 28%; position: relative; text-align: center; }
     .podium-img { width: 100%; height: 160px; object-fit: contain; background: white; border-radius: 16px; padding: 10px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; transition: transform 0.3s; }
     
@@ -124,7 +125,7 @@
       </div>
 
       <!-- ส่วนหัว -->
-      <div class="text-center mb-8 pt-4">
+      <div class="text-center mb-4 pt-4">
         <img src="./logo.png" class="w-20 h-20 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
         <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 tracking-wide drop-shadow-lg mb-3">
           สรุปผลโหวตเสื้อสูทแบบเรียลไทม์
@@ -195,13 +196,13 @@
     function switchView(view) {
       if(view === 'dashboard') {
         $('view-vote').style.display = 'none'; 
-        $('top-right-logo').classList.add('hidden'); // ซ่อนโลโก้ตอนเปิดจอใหญ่
+        $('top-right-logo').classList.add('hidden');
         $('view-dashboard').style.display = 'block';
         autoRefreshInterval = setInterval(loadData, 5000); 
         setTimeout(() => renderPageantDashboard(), 100);
       } else {
         $('view-dashboard').style.display = 'none'; 
-        $('top-right-logo').classList.remove('hidden'); // แสดงโลโก้กลับมา
+        $('top-right-logo').classList.remove('hidden');
         $('view-vote').style.display = 'flex'; 
         clearInterval(autoRefreshInterval);
       }
@@ -251,7 +252,6 @@
       $('total-votes').textContent = votes.length;
       $('dash-total').textContent = votes.length; 
       
-      // กราฟเล็กหน้าโหวต
       const labels = options.map(opt => opt.label);
       const dataValues = options.map(opt => counts[opt.id]);
       const bgColors = options.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
@@ -262,15 +262,13 @@
         chart = new Chart($('results-chart'), { type: 'bar', data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }, x: { display: false } } } }); 
       }
       
-      // อัปเดตหน้า Dashboard ถ้าเปิดอยู่
       if($('view-dashboard').style.display === 'block') {
         renderPageantDashboard();
       }
     }
 
-    // ฟังก์ชันใหม่: จัดการแสดงผลเวทีประกวด Top 3
+    // ฟังก์ชันเวทีประกวด (แก้ไขการจัดวางตัวหนังสือแล้ว)
     function renderPageantDashboard() {
-      // 1. จัดอันดับข้อมูลทั้งหมด
       let sortedData = currentOptions.map(opt => ({
         ...opt,
         votes: currentResults[opt.id] || 0
@@ -284,55 +282,53 @@
         return;
       }
 
-      // 2. ดึง 3 อันดับแรก
       const top1 = sortedData[0] || null;
       const top2 = sortedData[1] || null;
       const top3 = sortedData[2] || null;
 
-      // สร้าง HTML สำหรับ Top 3
       let podiumHTML = ``;
       
-      // อันดับ 2 (ซ้าย)
+      // อันดับ 2
       if(top2) {
         podiumHTML += `
           <div class="podium-item rank-2 transform transition hover:scale-105">
-            <div class="text-white text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-md line-clamp-2">${top2.label}</div>
-            <div class="text-[#E0E0E0] font-bold text-2xl mb-3 bg-black/40 px-4 py-1 rounded-full border border-gray-600">${top2.votes} โหวต</div>
+            <div class="text-white text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-md line-clamp-2">${top2.label}</div>
+            <div class="text-[#E0E0E0] font-bold text-xl sm:text-2xl mb-4 bg-black/40 px-4 py-1 rounded-full border border-gray-600">${top2.votes} โหวต</div>
             <img src="${top2.image}" class="podium-img">
             <div class="podium-base"><span class="podium-rank-num">2</span></div>
           </div>`;
       } else {
-        podiumHTML += `<div class="podium-item"></div>`; // ช่องว่าง
+        podiumHTML += `<div class="podium-item"></div>`;
       }
 
-      // อันดับ 1 (กลาง - มงลง)
+      // อันดับ 1 (เอามงกุฎออกจาก Absolute ให้เรียงต่อกันปกติ)
       if(top1) {
         podiumHTML += `
           <div class="podium-item rank-1 transform transition hover:scale-105 z-20">
-            <div class="absolute -top-16 text-5xl drop-shadow-[0_0_15px_rgba(255,215,0,0.8)] animate-bounce">👑</div>
-            <div class="text-white text-2xl font-bold mb-2 break-words w-full px-2 drop-shadow-lg line-clamp-2">${top1.label}</div>
-            <div class="text-[#FFD700] font-bold text-3xl mb-3 bg-black/60 px-5 py-1.5 rounded-full border border-yellow-600/50 shadow-lg">${top1.votes} โหวต</div>
+            <div class="text-5xl sm:text-6xl drop-shadow-[0_0_15px_rgba(255,215,0,0.8)] animate-bounce mb-2">👑</div>
+            <div class="text-white text-xl sm:text-2xl font-bold mb-2 break-words w-full px-2 drop-shadow-lg line-clamp-2">${top1.label}</div>
+            <div class="text-[#FFD700] font-bold text-2xl sm:text-3xl mb-4 bg-black/60 px-5 py-1.5 rounded-full border border-yellow-600/50 shadow-lg">${top1.votes} โหวต</div>
             <img src="${top1.image}" class="podium-img">
             <div class="podium-base"><span class="podium-rank-num">1</span></div>
           </div>`;
       }
 
-      // อันดับ 3 (ขวา)
+      // อันดับ 3
       if(top3) {
         podiumHTML += `
           <div class="podium-item rank-3 transform transition hover:scale-105">
-            <div class="text-white text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-md line-clamp-2">${top3.label}</div>
-            <div class="text-[#FFA07A] font-bold text-2xl mb-3 bg-black/40 px-4 py-1 rounded-full border border-gray-600">${top3.votes} โหวต</div>
+            <div class="text-white text-lg sm:text-xl font-bold mb-2 break-words w-full px-2 drop-shadow-md line-clamp-2">${top3.label}</div>
+            <div class="text-[#FFA07A] font-bold text-xl sm:text-2xl mb-4 bg-black/40 px-4 py-1 rounded-full border border-gray-600">${top3.votes} โหวต</div>
             <img src="${top3.image}" class="podium-img">
             <div class="podium-base"><span class="podium-rank-num">3</span></div>
           </div>`;
       } else {
-        podiumHTML += `<div class="podium-item"></div>`; // ช่องว่าง
+        podiumHTML += `<div class="podium-item"></div>`;
       }
 
       podiumContainer.innerHTML = podiumHTML;
 
-      // 3. แสดงผลอันดับที่เหลือ (อันดับ 4 เป็นต้นไป)
+      // อันดับที่เหลือ
       const runners = sortedData.slice(3);
       if(runners.length > 0) {
         let runnersHTML = '';
@@ -361,7 +357,6 @@
         buildVotingForm(data.options);
         buildResultsView(data.options, data.votes);
         
-        // สร้างรายการเรียงลำดับด้านข้างสำหรับมือถือด้วย
         let sortedOptions = [...data.options].map(opt => ({...opt, votes: currentResults[opt.id] || 0})).sort((a, b) => b.votes - a.votes);
         $('results-list').innerHTML = '';
         sortedOptions.forEach((opt, index) => {
