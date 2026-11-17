@@ -11,7 +11,6 @@
     :root { --primary-green: #89C040; --primary-yellow: #FFB800; --text-dark: #2D3748; }
     body { font-family: "IBM Plex Sans Thai", sans-serif; background: linear-gradient(135deg, #FAF4E1 0%, #E8F5E9 100%); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
     
-    /* Vote View Styles */
     .vote-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
     .choice { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 16px; background: #fff; cursor: pointer; transition: all 0.2s; }
     .choice:hover { border-color: var(--primary-green); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
@@ -27,32 +26,26 @@
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
     .btn-submit:disabled { opacity: 0.6; cursor: wait; }
     
-    /* Dashboard View Styles */
     .dashboard-view { display: none; background: #111827; min-height: 100vh; color: white; padding: 20px; }
     .dashboard-card { background: #1F2937; border-radius: 24px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #374151; height: calc(100vh - 40px); display: flex; flex-direction: column; }
-    
     .modal-overlay { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body class="w-full relative">
 
-  <!-- ================= หน้าที่ 1: หน้าโหวตและแอดมิน ================= -->
   <div id="view-vote" class="w-full flex justify-center p-4 sm:p-6 min-h-screen items-center">
     
-    <!-- ปุ่มไปหน้า Dashboard (ซ้ายล่าง) -->
     <button onclick="switchView('dashboard')" class="fixed bottom-4 left-4 bg-gray-900 text-white p-3 rounded-xl shadow-lg z-40 transition-all hover:scale-105 flex items-center gap-2 text-sm font-semibold">
       📊 เปิดหน้าสรุปผลขึ้นจอ
     </button>
 
-    <!-- ปุ่ม Admin (ขวาล่าง) -->
     <button onclick="openAdmin()" class="fixed bottom-4 right-4 bg-white text-gray-500 hover:text-[var(--primary-yellow)] p-3 rounded-full shadow-lg border border-gray-100 z-40 transition-all hover:scale-110">
       ⚙️
     </button>
 
     <main class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-6 items-start my-auto">
       
-      <!-- ฝั่งโหวต -->
       <section class="vote-card p-6 sm:p-8 relative w-full order-2 md:order-1">
         <div id="loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-[24px]">
           <div class="w-12 h-12 border-4 border-gray-100 border-t-[var(--primary-green)] rounded-full animate-spin"></div>
@@ -78,7 +71,6 @@
         </form>
       </section>
 
-      <!-- ฝั่งสรุปผลมินิ -->
       <section class="vote-card p-6 sm:p-8 flex flex-col h-full w-full order-1 md:order-2">
         <div class="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
           <div><h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2></div>
@@ -93,32 +85,25 @@
     </main>
   </div>
 
-  <!-- ================= หน้าที่ 2: Dashboard แบบเรียลไทม์ (สำหรับโชว์ขึ้นจอ) ================= -->
+  <!-- หน้าจอ Dashboard -->
   <div id="view-dashboard" class="dashboard-view w-full">
     <div class="dashboard-card relative">
-      <!-- ปุ่มกลับหน้าโหวต / เต็มจอ -->
       <div class="absolute top-6 right-6 flex gap-3 z-50">
         <button onclick="toggleFullScreen()" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-semibold transition">⛶ ขยายเต็มจอ</button>
         <button onclick="switchView('vote')" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition">✕ ปิดหน้าโชว์ผล</button>
       </div>
-
       <div class="text-center mb-6">
         <h1 class="text-4xl font-bold text-white tracking-wide">📊 สรุปผลโหวตเสื้อสูทแบบเรียลไทม์</h1>
         <p class="text-gray-400 mt-2 text-lg">ข้อมูลอัปเดตอัตโนมัติ • จำนวนผู้โหวตทั้งหมด: <span id="dash-total" class="text-yellow-400 font-bold text-2xl">0</span> คน</p>
       </div>
-
-      <div class="flex-grow relative w-full mt-4">
-        <canvas id="dashboard-chart"></canvas>
-      </div>
+      <div class="flex-grow relative w-full mt-4"><canvas id="dashboard-chart"></canvas></div>
     </div>
   </div>
 
-  <!-- Modal ขยายรูป -->
   <div id="image-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('image-modal')">
     <img id="modal-img" src="" class="rounded-xl shadow-2xl max-h-[85vh] max-w-full object-contain bg-white">
   </div>
 
-  <!-- Admin Modal -->
   <div id="admin-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('admin-modal')">
     <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative" onclick="event.stopPropagation()">
       <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1">✕</button>
@@ -149,34 +134,25 @@
   </div>
 
   <script>
-    // ===== 1. ใส่ลิงก์ Apps Script ใหม่ตรงนี้ =====
+    // ===== ใส่ลิงก์ Apps Script ของคุณตรงนี้ =====
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYTWNZ2AEW7-sYbDveS9GyYuLi8BCnri6sluOrfW7A8TJ-vtVCRsbOGy4dO9C3eM31oA/exec'; 
-    // ===========================================
+    // =======================================
 
-    // API ฝากรูปฟรี (เพื่อให้ลืมปัญหา Google Drive ไปได้เลย)
     const IMGBB_API_KEY = '3a95c3789b703e481bdfcf703b0d1e57'; 
-    
     const CHART_COLORS = ['#89C040', '#FFB800', '#F4A261', '#2A9D8F', '#E76F51', '#457B9D', '#E9C46A'];
     const $ = id => document.getElementById(id);
     let chart = null, dashChart = null, currentOptions = [], currentResults = {};
     let autoRefreshInterval = null;
 
-    // เปลี่ยนหน้าจอ (โหวต <-> Dashboard)
     function switchView(view) {
       if(view === 'dashboard') {
-        $('view-vote').style.display = 'none';
-        $('view-dashboard').style.display = 'block';
-        // อัปเดตข้อมูลทุกๆ 5 วินาที
-        autoRefreshInterval = setInterval(loadData, 5000); 
-        setTimeout(() => buildDashboardChart(), 500); // วาดกราฟใหญ่
+        $('view-vote').style.display = 'none'; $('view-dashboard').style.display = 'block';
+        autoRefreshInterval = setInterval(loadData, 5000); setTimeout(() => buildDashboardChart(), 500);
       } else {
-        $('view-dashboard').style.display = 'none';
-        $('view-vote').style.display = 'flex';
-        clearInterval(autoRefreshInterval);
+        $('view-dashboard').style.display = 'none'; $('view-vote').style.display = 'flex'; clearInterval(autoRefreshInterval);
       }
     }
 
-    // ทำเต็มจอ
     function toggleFullScreen() {
       if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } 
       else { if (document.exitFullscreen) document.exitFullscreen(); }
@@ -185,15 +161,13 @@
     function showNotice(msg, error = false) {
       $('notice').textContent = msg;
       $('notice').className = error ? 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-red-100 text-red-700' : 'mb-5 rounded-xl px-4 py-3 text-sm text-center bg-green-100 text-green-700';
-      $('notice').classList.remove('hidden');
-      setTimeout(() => $('notice').classList.add('hidden'), 5000);
+      $('notice').classList.remove('hidden'); setTimeout(() => $('notice').classList.add('hidden'), 5000);
     }
 
     function openModal(e, src) { e.preventDefault(); e.stopPropagation(); $('modal-img').src = src; $('image-modal').classList.remove('hidden'); }
     function closeModal(id) { $(id).classList.add('hidden'); }
     function openAdmin() { if(prompt("รหัสผ่านแอดมิน (1234)") === "1234") $('admin-modal').classList.remove('hidden'); }
 
-    // สร้างฟอร์มโหวต
     function buildVotingForm(options) {
       const container = $('dynamic-choices');
       container.innerHTML = options.length ? '' : '<p class="text-red-500 text-sm col-span-2 text-center p-4 bg-red-50 rounded-lg">แอดมินยังไม่ได้ตั้งค่าตัวเลือก</p>';
@@ -205,14 +179,13 @@
       });
     }
 
-    // วาดกราฟหน้าแรก
     function buildResultsView(options, votes) {
       let counts = {}; options.forEach(opt => counts[opt.id] = 0);
       votes.forEach(v => { if(counts[v] !== undefined) counts[v]++; });
       currentResults = counts;
       
       $('total-votes').textContent = votes.length;
-      $('dash-total').textContent = votes.length; // อัปเดตเลขหน้า Dash
+      $('dash-total').textContent = votes.length; 
       $('results-list').innerHTML = '';
       
       options.forEach((opt, index) => {
@@ -227,13 +200,11 @@
       if (chart) { chart.data.labels = labels; chart.data.datasets[0].data = dataValues; chart.data.datasets[0].backgroundColor = bgColors; chart.update(); } 
       else { chart = new Chart($('results-chart'), { type: 'bar', data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } }, x: { display: false } } } }); }
       
-      // ถ้าหน้า Dashboard เปิดอยู่ ให้อัปเดตกราฟใหญ่ด้วย
       if(dashChart) { dashChart.data.labels = labels; dashChart.data.datasets[0].data = dataValues; dashChart.data.datasets[0].backgroundColor = bgColors; dashChart.update(); }
     }
 
-    // วาดกราฟหน้า Dashboard 
     function buildDashboardChart() {
-      if(dashChart) return; // สร้างครั้งเดียวพอ
+      if(dashChart) return; 
       const labels = currentOptions.map(opt => opt.label);
       const dataValues = currentOptions.map(opt => currentResults[opt.id]);
       const bgColors = currentOptions.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
@@ -241,17 +212,7 @@
       dashChart = new Chart($('dashboard-chart'), { 
         type: 'bar', 
         data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: bgColors, borderRadius: 10, borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)' }] }, 
-        options: { 
-          responsive: true, maintainAspectRatio: false, 
-          plugins: { 
-            legend: { display: false },
-            datalabels: { color: '#fff', font: { size: 24, weight: 'bold' } } // ต้องลง plugin เพิ่มถ้าจะใช้ตัวเลขบนแท่ง
-          }, 
-          scales: { 
-            y: { beginAtZero: true, ticks: { stepSize: 1, color: '#9CA3AF', font: { size: 16 } }, grid: { color: '#374151' } }, 
-            x: { ticks: { color: '#F3F4F6', font: { size: 18, family: 'IBM Plex Sans Thai' } }, grid: { display: false } } 
-          } 
-        } 
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#9CA3AF', font: { size: 16 } }, grid: { color: '#374151' } }, x: { ticks: { color: '#F3F4F6', font: { size: 18, family: 'IBM Plex Sans Thai' } }, grid: { display: false } } } } 
       });
     }
 
@@ -267,7 +228,6 @@
       finally { $('loading').classList.add('hidden'); }
     }
 
-    // ส่งโหวต
     $('vote-form').addEventListener('submit', async e => {
       e.preventDefault();
       const choice = document.querySelector('input[name="color-choice"]:checked');
@@ -280,34 +240,47 @@
       finally { $('submit-button').disabled = false; $('submit-button').innerHTML = 'ส่งผลโหวต'; }
     });
 
-    // แอดมินเพิ่มตัวเลือก (ฝากรูปผ่าน ImgBB หมดปัญหา 100%)
+    // แก้ไขจุดนี้: แปลงไฟล์เป็น Base64 ก่อนส่งให้ ImgBB ป้องกันไฟล์พัง 100%
     $('add-option-form').addEventListener('submit', async e => {
       e.preventDefault();
-      $('btn-save-opt').disabled = true; $('btn-save-opt').innerHTML = 'กำลังอัปโหลดรูปภาพ...';
+      $('btn-save-opt').disabled = true; $('btn-save-opt').innerHTML = 'กำลังประมวลผลรูปภาพ...';
       $('admin-msg').classList.add('hidden');
       
       const file = $('opt-img').files[0];
-      const formData = new FormData();
-      formData.append('image', file);
+      const reader = new FileReader();
+      
+      reader.onload = async function() {
+        // ดึงเฉพาะรหัสรูปภาพ
+        const base64Image = reader.result.split(',')[1]; 
+        const formData = new FormData();
+        formData.append('image', base64Image);
 
-      try {
-        // 1. อัปโหลดรูปไปที่เซิฟเวอร์รับฝากรูป
-        const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
-        const imgData = await imgRes.json();
-        
-        if(imgData.success) {
-          // 2. เอารูปที่ฝากสำเร็จแล้ว ส่งแค่ "ลิงก์" ไปเก็บที่ Google Sheet
-          const payload = { action: 'addOption', name: $('opt-name').value, imageUrl: imgData.data.url };
-          await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        try {
+          const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+          const imgData = await imgRes.json();
           
-          $('admin-msg').textContent = "เพิ่มเรียบร้อยแล้ว!"; $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
-          $('add-option-form').reset(); loadData();
-        } else { throw new Error("อัปโหลดรูปไม่สำเร็จ"); }
-      } catch(err) { 
-        $('admin-msg').textContent = "พังเพราะ: " + err.message; $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
-      } finally { 
-        $('btn-save-opt').disabled = false; $('btn-save-opt').innerHTML = 'อัปโหลดและบันทึก'; $('admin-msg').classList.remove('hidden');
-      }
+          if(imgData.success) {
+            $('btn-save-opt').innerHTML = 'กำลังบันทึกลงระบบ...';
+            const payload = { action: 'addOption', name: $('opt-name').value, imageUrl: imgData.data.url };
+            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+            
+            $('admin-msg').textContent = "เพิ่มตัวเลือกสำเร็จแล้ว!"; 
+            $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
+            $('add-option-form').reset(); 
+            loadData();
+          } else { 
+            throw new Error("เซิร์ฟเวอร์ปฏิเสธไฟล์ภาพ"); 
+          }
+        } catch(err) { 
+          $('admin-msg').textContent = "เกิดข้อผิดพลาด: " + err.message; 
+          $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
+        } finally { 
+          $('btn-save-opt').disabled = false; $('btn-save-opt').innerHTML = 'อัปโหลดและบันทึก'; 
+          $('admin-msg').classList.remove('hidden');
+        }
+      };
+      
+      reader.readAsDataURL(file); // เริ่มการอ่านไฟล์
     });
 
     function downloadCSV() {
