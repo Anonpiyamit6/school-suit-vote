@@ -240,47 +240,56 @@
       finally { $('submit-button').disabled = false; $('submit-button').innerHTML = 'ส่งผลโหวต'; }
     });
 
-    // แก้ไขจุดนี้: แปลงไฟล์เป็น Base64 ก่อนส่งให้ ImgBB ป้องกันไฟล์พัง 100%
+    // โค้ดส่วนแอดมินอัปโหลดรูป (แก้ไขใหม่ ส่งไฟล์ตรงๆ เสถียรกว่า)
     $('add-option-form').addEventListener('submit', async e => {
       e.preventDefault();
-      $('btn-save-opt').disabled = true; $('btn-save-opt').innerHTML = 'กำลังประมวลผลรูปภาพ...';
+      $('btn-save-opt').disabled = true; 
+      $('btn-save-opt').innerHTML = 'กำลังอัปโหลดรูปภาพ...';
       $('admin-msg').classList.add('hidden');
       
       const file = $('opt-img').files[0];
-      const reader = new FileReader();
-      
-      reader.onload = async function() {
-        // ดึงเฉพาะรหัสรูปภาพ
-        const base64Image = reader.result.split(',')[1]; 
-        const formData = new FormData();
-        formData.append('image', base64Image);
+      if(!file) return;
 
-        try {
-          const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
-          const imgData = await imgRes.json();
+      // 1. นำไฟล์รูปใส่ FormData แบบตรงๆ (ไม่ต้องทำ Base64)
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        // ส่งไฟล์ไปที่ ImgBB
+        const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
+          method: 'POST', 
+          body: formData 
+        });
+        
+        const imgData = await imgRes.json();
+        
+        if(imgData.success) {
+          $('btn-save-opt').innerHTML = 'กำลังบันทึกลงระบบ...';
           
-          if(imgData.success) {
-            $('btn-save-opt').innerHTML = 'กำลังบันทึกลงระบบ...';
-            const payload = { action: 'addOption', name: $('opt-name').value, imageUrl: imgData.data.url };
-            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-            
-            $('admin-msg').textContent = "เพิ่มตัวเลือกสำเร็จแล้ว!"; 
-            $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
-            $('add-option-form').reset(); 
-            loadData();
-          } else { 
-            throw new Error("เซิร์ฟเวอร์ปฏิเสธไฟล์ภาพ"); 
-          }
-        } catch(err) { 
-          $('admin-msg').textContent = "เกิดข้อผิดพลาด: " + err.message; 
-          $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
-        } finally { 
-          $('btn-save-opt').disabled = false; $('btn-save-opt').innerHTML = 'อัปโหลดและบันทึก'; 
-          $('admin-msg').classList.remove('hidden');
+          // 2. นำลิงก์รูปที่ได้ ส่งไปเก็บที่ Google Sheets
+          const payload = { action: 'addOption', name: $('opt-name').value, imageUrl: imgData.data.url };
+          await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            body: JSON.stringify(payload) 
+          });
+          
+          $('admin-msg').textContent = "เพิ่มตัวเลือกสำเร็จแล้ว!"; 
+          $('admin-msg').className = "text-sm p-3 rounded-lg bg-green-100 text-green-700 block mb-4 font-bold";
+          $('add-option-form').reset(); 
+          loadData(); // โหลดหน้าใหม่เพื่อให้รูปขึ้น
+        } else { 
+          // หาก ImgBB แจ้ง Error ให้ดึงข้อความจริงๆ ของมันมาแสดง
+          const errorMsg = imgData.error ? imgData.error.message : "เซิร์ฟเวอร์ปฏิเสธไฟล์ภาพ";
+          throw new Error(errorMsg); 
         }
-      };
-      
-      reader.readAsDataURL(file); // เริ่มการอ่านไฟล์
+      } catch(err) { 
+        $('admin-msg').textContent = "เกิดข้อผิดพลาด: " + err.message; 
+        $('admin-msg').className = "text-sm p-3 rounded-lg bg-red-100 text-red-700 block mb-4 font-bold";
+      } finally { 
+        $('btn-save-opt').disabled = false; 
+        $('btn-save-opt').innerHTML = 'อัปโหลดและบันทึก'; 
+        $('admin-msg').classList.remove('hidden');
+      }
     });
 
     function downloadCSV() {
