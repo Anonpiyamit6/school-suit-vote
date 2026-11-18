@@ -7,7 +7,6 @@
   <title>ระบบโหวตเสื้อสูทโรงเรียน</title>
   
   <link rel="icon" type="image/png" href="./logo.png">
-  <!-- ลบ Chart.js ออก เพราะเราไม่ใช้กราฟแท่งแล้ว ทำให้เว็บโหลดเร็วขึ้น -->
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -31,17 +30,13 @@
     .btn-submit:hover:not(:disabled) { background: #76A836; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(137, 192, 64, 0.3); }
     .btn-submit:disabled { opacity: 0.6; cursor: wait; }
     
-    /* สไตล์โพเดียมใหญ่ (Dashboard) */
     .dashboard-view { display: none; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); min-height: 100vh; color: #1f2937; padding: 20px; overflow-y: auto;}
     .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 40px; height: 550px; }
     
-    /* สไตล์โพเดียมเล็ก (หน้าโหวต) */
     .mini-podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; height: 260px; margin-bottom: 20px; }
     .mini-podium-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 32%; position: relative; text-align: center; }
     
-    /* ส่วนร่วมโพเดียม */
     .podium-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 28%; position: relative; text-align: center; }
-    
     .podium-img { width: 100%; object-fit: contain; background: white; border-radius: 12px; padding: 8px; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 10; transition: transform 0.3s; }
     
     .rank-1 .podium-img { border: 4px solid #FFD700; box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3); }
@@ -58,21 +53,23 @@
 
     .modal-overlay { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    
+    /* สกอร์บาร์สำหรับแอดมิน */
+    .admin-scroll::-webkit-scrollbar { width: 6px; }
+    .admin-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
   </style>
 </head>
 <body class="w-full relative">
 
-  <!-- Header บาร์ด้านบนสุด -->
+  <!-- Header -->
   <header id="vote-header" class="w-full bg-white/90 backdrop-blur-md fixed top-0 left-0 z-40 border-b border-gray-200 shadow-sm transition-all">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
-      
       <div class="flex items-center gap-2.5 sm:gap-3">
         <img src="./logo.png" class="w-9 h-9 sm:w-11 sm:h-11 drop-shadow-sm object-contain" alt="โลโก้โรงเรียน">
         <h1 class="font-bold text-emerald-800 text-[14px] sm:text-lg tracking-wide leading-tight line-clamp-1">
-          ระบบโหวตสีเสื้อสูทโรงเรียนบางสะพานวิทยา
+          ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา
         </h1>
       </div>
-
       <div class="flex items-center gap-1.5 sm:gap-2">
         <button onclick="switchView('dashboard')" class="text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition flex items-center gap-1.5 font-medium border border-gray-200">
           📊 <span class="hidden sm:inline">หน้าสรุปผล</span>
@@ -81,7 +78,6 @@
           ⚙️ <span class="hidden sm:inline">จัดการ</span>
         </button>
       </div>
-
     </div>
   </header>
 
@@ -89,7 +85,7 @@
   <div id="view-vote" class="w-full flex justify-center px-4 pt-24 pb-12 min-h-screen items-start">
     <main class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 sm:gap-8 items-start mx-auto">
       
-      <!-- ส่วนที่ 1: ผลโหวตปัจจุบัน (ตอนนี้ใช้เป็น Mini Podium แทนกราฟแท่ง) -->
+      <!-- ส่วนที่ 1: ผลโหวตปัจจุบัน -->
       <section class="vote-card p-5 sm:p-8 flex flex-col h-full w-full order-1 lg:order-2">
         <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-4">
           <div><h2 class="text-xl font-bold text-gray-800">ผลโหวตปัจจุบัน</h2></div>
@@ -98,11 +94,7 @@
             <span class="text-xs text-gray-500 block mt-1">โหวตทั้งหมด</span>
           </div>
         </div>
-        
-        <!-- มินิโพเดียมสำหรับหน้าแรก -->
         <div id="mini-podium" class="mini-podium-container w-full"></div>
-        
-        <!-- อันดับที่เหลือ -->
         <div id="results-list" class="space-y-3 text-sm flex-grow max-h-[40vh] overflow-y-auto pr-1 mt-4"></div>
       </section>
 
@@ -135,17 +127,15 @@
     </main>
   </div>
 
-  <!-- หน้าจอ Dashboard (สไตล์เวทีประกวดใหญ่) -->
+  <!-- หน้าจอ Dashboard -->
   <div id="view-dashboard" class="dashboard-view w-full">
     <div class="max-w-7xl mx-auto relative pt-4 pb-10">
       
-      <!-- ปุ่มควบคุม -->
       <div class="absolute top-0 right-0 flex gap-3 z-50">
         <button onclick="toggleFullScreen()" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold transition shadow-sm">⛶ ขยายเต็มจอ</button>
         <button onclick="switchView('vote')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md">✕ ปิดหน้าโชว์ผล</button>
       </div>
 
-      <!-- ส่วนหัว -->
       <div class="text-center mb-4 pt-4">
         <img src="./logo.png" class="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 rounded-3xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] border-[4px] border-white bg-white/60 backdrop-blur-sm object-contain p-1 transform transition hover:scale-105">
         <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-teal-500 tracking-wide drop-shadow-sm mb-5 leading-normal pb-2">
@@ -156,51 +146,53 @@
         </p>
       </div>
 
-      <!-- โพเดียม Top 3 -->
-      <div id="dashboard-podium" class="podium-container max-w-4xl mx-auto mb-16">
-        <!-- จะถูกสร้างโดย JavaScript -->
-      </div>
+      <div id="dashboard-podium" class="podium-container max-w-4xl mx-auto mb-16"></div>
 
-      <!-- อันดับที่เหลือ -->
       <div class="max-w-5xl mx-auto">
         <h3 class="text-xl text-emerald-700 text-center mb-6 font-semibold flex items-center justify-center gap-4">
           <span class="h-px bg-emerald-200 flex-grow"></span> อันดับที่เหลือ <span class="h-px bg-emerald-200 flex-grow"></span>
         </h3>
-        <div id="dashboard-runners" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <!-- จะถูกสร้างโดย JavaScript -->
-        </div>
+        <div id="dashboard-runners" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
       </div>
 
     </div>
   </div>
 
+  <!-- Modal ดูรูปขยาย -->
   <div id="image-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('image-modal')">
     <img id="modal-img" src="" class="rounded-xl shadow-2xl max-h-[85vh] max-w-full object-contain bg-white">
   </div>
 
+  <!-- Modal ของระบบจัดการ (Admin) -->
   <div id="admin-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('admin-modal')">
-    <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative" onclick="event.stopPropagation()">
+    <!-- ขยายกล่องให้ยาวขึ้นรองรับลิสต์แบบเสื้อ -->
+    <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
       <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1 hover:bg-gray-200">✕</button>
-      <h2 class="text-xl font-bold mb-5 flex items-center gap-2 text-gray-800">⚙️ ระบบจัดการ (Admin)</h2>
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">⚙️ ระบบจัดการ (Admin)</h2>
       
-      <div class="space-y-5">
+      <div class="space-y-4 overflow-y-auto admin-scroll pr-2 flex-grow">
         <button onclick="downloadCSV()" class="w-full bg-yellow-50 text-yellow-700 hover:bg-yellow-100 font-semibold py-3 rounded-xl border border-yellow-200 transition-all shadow-sm">
           📥 ดาวน์โหลดสรุปผลโหวต (CSV)
         </button>
-        <div class="border-t border-gray-200"></div>
-        <h3 class="font-bold text-gray-700 text-lg">➕ เพิ่มตัวเลือกแบบเสื้อสูทใหม่</h3>
         
-        <form id="add-option-form" class="space-y-4">
+        <div class="border-t border-gray-200 pt-4"></div>
+        <h3 class="font-bold text-gray-700">➕ เพิ่มแบบเสื้อสูทใหม่</h3>
+        <form id="add-option-form" class="space-y-3">
           <div>
-            <label class="text-sm font-semibold text-gray-600 block mb-1">ชื่อเรียกเสื้อสูท</label>
-            <input type="text" id="opt-name" class="field !py-2" placeholder="เช่น 057 เบอร์ 1" required>
+            <input type="text" id="opt-name" class="field !py-2 text-sm" placeholder="ระบุชื่อเรียก (เช่น 057 เบอร์ 1)" required>
           </div>
           <div>
-            <label class="text-sm font-semibold text-gray-600 block mb-1">รูปตัวอย่างเสื้อ (จำเป็น)</label>
             <input type="file" id="opt-img" accept="image/*" required class="w-full text-sm p-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[var(--primary-green)] bg-gray-50">
           </div>
-          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-3 rounded-xl font-bold mt-2 shadow-md">อัปโหลดและบันทึก</button>
+          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-2.5 rounded-xl font-bold text-sm shadow-md">อัปโหลดและบันทึก</button>
         </form>
+
+        <!-- ส่วนใหม่: จัดการและลบแบบเสื้อ -->
+        <div class="border-t border-gray-200 pt-4 mt-4"></div>
+        <h3 class="font-bold text-gray-700 mb-2">🗑️ จัดการลบแบบเสื้อ</h3>
+        <div id="admin-options-list" class="space-y-2">
+          <!-- โค้ด JS จะมาสร้างลิสต์ที่มีปุ่มลบตรงนี้ -->
+        </div>
       </div>
     </div>
   </div>
@@ -235,6 +227,7 @@
 
     function openModal(e, src) { e.preventDefault(); e.stopPropagation(); $('modal-img').src = src; $('image-modal').classList.remove('hidden'); }
     function closeModal(id) { $(id).classList.add('hidden'); }
+    
     function openAdmin() { 
       Swal.fire({
         title: 'รหัสผ่านแอดมิน',
@@ -264,21 +257,68 @@
       });
     }
 
-    // ฟังก์ชันสร้างมินิโพเดียมสำหรับหน้าแรกโหวต
+    // สร้างลิสต์ของแอดมิน เพื่อให้กดลบได้
+    function renderAdminList(options) {
+      const listContainer = $('admin-options-list');
+      if (options.length === 0) {
+        listContainer.innerHTML = '<p class="text-sm text-gray-500 text-center py-2">ยังไม่มีแบบเสื้อ</p>';
+        return;
+      }
+      
+      let html = '';
+      options.forEach(opt => {
+        html += `
+          <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg border border-gray-200">
+            <div class="flex items-center gap-2 overflow-hidden">
+              <img src="${opt.image}" class="w-8 h-8 object-cover rounded bg-white border border-gray-200 shrink-0">
+              <span class="text-sm font-semibold text-gray-700 truncate">${opt.label}</span>
+            </div>
+            <button type="button" onclick="deleteOption('${opt.id}', '${opt.label}')" class="bg-red-100 hover:bg-red-500 text-red-600 hover:text-white p-2 rounded-lg transition-colors shrink-0" title="ลบแบบนี้">
+              🗑️
+            </button>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    }
+
+    // ฟังก์ชันสั่งลบ
+    window.deleteOption = function(id, name) {
+      Swal.fire({
+        title: 'ยืนยันการลบ?',
+        text: `คุณต้องการลบ "${name}" ใช่หรือไม่? (ผู้ที่โหวตเสื้อแบบนี้ไปแล้ว คะแนนจะหายไป)`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#9ca3af',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+          try {
+            await fetch(SCRIPT_URL, { 
+              method: 'POST', 
+              body: JSON.stringify({ action: 'deleteOption', optionId: id }) 
+            });
+            await loadData();
+            Swal.fire({ icon: 'success', title: 'ลบสำเร็จ!', text: 'ลบข้อมูลเสื้อและการโหวตที่เกี่ยวข้องแล้ว', confirmButtonColor: '#89C040', timer: 2000 });
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.message, confirmButtonColor: '#89C040' });
+          }
+        }
+      });
+    };
+
     function renderMiniPodium(sortedData) {
       const container = $('mini-podium');
       if(sortedData.length === 0) {
         container.innerHTML = `<div class="text-gray-500 text-sm w-full text-center py-10">ยังไม่มีตัวเลือกให้โหวต</div>`;
         return;
       }
-
-      const top1 = sortedData[0] || null;
-      const top2 = sortedData[1] || null;
-      const top3 = sortedData[2] || null;
-
+      const top1 = sortedData[0] || null, top2 = sortedData[1] || null, top3 = sortedData[2] || null;
       let html = ``;
       
-      // อันดับ 2
       if(top2) {
         html += `
           <div class="mini-podium-item rank-2">
@@ -289,7 +329,6 @@
           </div>`;
       } else { html += `<div class="mini-podium-item"></div>`; }
 
-      // อันดับ 1
       if(top1) {
         html += `
           <div class="mini-podium-item rank-1 z-20">
@@ -301,7 +340,6 @@
           </div>`;
       }
 
-      // อันดับ 3
       if(top3) {
         html += `
           <div class="mini-podium-item rank-3">
@@ -315,7 +353,6 @@
       container.innerHTML = html;
     }
 
-    // ฟังก์ชันเวทีประกวดใหญ่ (แก้ไขให้ข้อความไม่ขาด Padding เพิ่มขึ้น)
     function renderPageantDashboard() {
       let sortedData = currentOptions.map(opt => ({
         ...opt,
@@ -330,10 +367,7 @@
         return;
       }
 
-      const top1 = sortedData[0] || null;
-      const top2 = sortedData[1] || null;
-      const top3 = sortedData[2] || null;
-
+      const top1 = sortedData[0] || null, top2 = sortedData[1] || null, top3 = sortedData[2] || null;
       let podiumHTML = ``;
       
       if(top2) {
@@ -396,8 +430,8 @@
         currentOptions = data.options;
         
         buildVotingForm(data.options);
+        renderAdminList(data.options); // อัปเดตรายการในหน้าแอดมิน
         
-        // นับคะแนน
         let counts = {}; data.options.forEach(opt => counts[opt.id] = 0);
         data.votes.forEach(v => { if(counts[v] !== undefined) counts[v]++; });
         currentResults = counts;
@@ -407,10 +441,8 @@
         
         let sortedOptions = [...data.options].map(opt => ({...opt, votes: counts[opt.id] || 0})).sort((a, b) => b.votes - a.votes);
         
-        // สร้างมินิโพเดียมในหน้าโหวต
         renderMiniPodium(sortedOptions);
         
-        // รายชื่ออันดับ 4 เป็นต้นไปในหน้าโหวต
         $('results-list').innerHTML = '';
         const runnersList = sortedOptions.slice(3);
         runnersList.forEach((opt, index) => {
