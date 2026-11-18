@@ -54,7 +54,6 @@
     .modal-overlay { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     
-    /* สกอร์บาร์สำหรับแอดมิน */
     .admin-scroll::-webkit-scrollbar { width: 6px; }
     .admin-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
   </style>
@@ -67,7 +66,7 @@
       <div class="flex items-center gap-2.5 sm:gap-3">
         <img src="./logo.png" class="w-9 h-9 sm:w-11 sm:h-11 drop-shadow-sm object-contain" alt="โลโก้โรงเรียน">
         <h1 class="font-bold text-emerald-800 text-[14px] sm:text-lg tracking-wide leading-tight line-clamp-1">
-          ระบบโหวตสีสูทโรงเรียนบางสะพานวิทยา
+          ระบบโหวตสีเสื้อสูทโรงเรียนบางสะพานวิทยา
         </h1>
       </div>
       <div class="flex items-center gap-1.5 sm:gap-2">
@@ -165,7 +164,6 @@
 
   <!-- Modal ของระบบจัดการ (Admin) -->
   <div id="admin-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4 modal-overlay" onclick="closeModal('admin-modal')">
-    <!-- ขยายกล่องให้ยาวขึ้นรองรับลิสต์แบบเสื้อ -->
     <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
       <button onclick="closeModal('admin-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 rounded-full p-1 hover:bg-gray-200">✕</button>
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">⚙️ ระบบจัดการ (Admin)</h2>
@@ -177,22 +175,36 @@
         
         <div class="border-t border-gray-200 pt-4"></div>
         <h3 class="font-bold text-gray-700">➕ เพิ่มแบบเสื้อสูทใหม่</h3>
+        
         <form id="add-option-form" class="space-y-3">
           <div>
             <input type="text" id="opt-name" class="field !py-2 text-sm" placeholder="ระบุชื่อเรียก (เช่น 057 เบอร์ 1)" required>
           </div>
-          <div>
-            <input type="file" id="opt-img" accept="image/*" required class="w-full text-sm p-2 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[var(--primary-green)] bg-gray-50">
+          
+          <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-3">
+            <p class="text-xs font-semibold text-gray-500">เลือกวิธีใส่รูปภาพ (เลือกอย่างใดอย่างหนึ่ง):</p>
+            
+            <!-- วิธีที่ 1: ไฟล์ -->
+            <div>
+              <label class="text-xs text-gray-600 block mb-1">วิธีที่ 1: อัปโหลดไฟล์จากเครื่อง</label>
+              <input type="file" id="opt-img-file" accept="image/*" class="w-full text-sm p-1.5 border border-gray-300 rounded-lg cursor-pointer bg-white">
+            </div>
+            
+            <div class="text-center text-xs text-gray-400 font-bold">- หรือ -</div>
+            
+            <!-- วิธีที่ 2: URL -->
+            <div>
+              <label class="text-xs text-gray-600 block mb-1">วิธีที่ 2: วางลิงก์รูปภาพโดยตรง (แนะนำถ้าอัปโหลดไม่ผ่าน)</label>
+              <input type="url" id="opt-img-url" class="field !py-1.5 text-sm !border-gray-300" placeholder="https://...">
+            </div>
           </div>
-          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-2.5 rounded-xl font-bold text-sm shadow-md">อัปโหลดและบันทึก</button>
+
+          <button type="submit" id="btn-save-opt" class="btn-submit w-full py-2.5 rounded-xl font-bold text-sm shadow-md">เพิ่มเข้าระบบ</button>
         </form>
 
-        <!-- ส่วนใหม่: จัดการและลบแบบเสื้อ -->
         <div class="border-t border-gray-200 pt-4 mt-4"></div>
         <h3 class="font-bold text-gray-700 mb-2">🗑️ จัดการลบแบบเสื้อ</h3>
-        <div id="admin-options-list" class="space-y-2">
-          <!-- โค้ด JS จะมาสร้างลิสต์ที่มีปุ่มลบตรงนี้ -->
-        </div>
+        <div id="admin-options-list" class="space-y-2"></div>
       </div>
     </div>
   </div>
@@ -248,16 +260,19 @@
 
     function buildVotingForm(options) {
       const container = $('dynamic-choices');
-      container.innerHTML = options.length ? '' : '<p class="text-red-500 text-sm col-span-2 text-center p-4 bg-red-50 rounded-xl">แอดมินยังไม่ได้ตั้งค่าตัวเลือก</p>';
+      container.innerHTML = options.length ? '' : '<p class="text-gray-500 text-sm col-span-2 text-center p-4 bg-gray-50 rounded-xl border border-gray-200">แอดมินยังไม่ได้ตั้งค่าตัวเลือก</p>';
       options.forEach(opt => {
+        // เพิ่มระบบเช็คถ้ารูปโหลดไม่ขึ้น ให้แสดงไอคอนแทน
         container.innerHTML += `<label class="choice group">
-          <div class="choice-img-container cursor-zoom-in" onclick="openModal(event, '${opt.image}')"><img src="${opt.image}" class="choice-img" loading="lazy"><div class="zoom-hint">🔍 ขยาย</div></div>
+          <div class="choice-img-container cursor-zoom-in flex items-center justify-center bg-gray-100" onclick="openModal(event, '${opt.image}')">
+            <img src="${opt.image}" class="choice-img" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/400x300/e2e8f0/64748b?text=Image+Broken';">
+            <div class="zoom-hint">🔍 ขยาย</div>
+          </div>
           <div class="flex items-center gap-3 w-full mt-1 px-1"><input type="radio" name="color-choice" value="${opt.id}" required><span class="font-semibold text-gray-700 group-hover:text-gray-900 text-lg">${opt.label}</span></div>
         </label>`;
       });
     }
 
-    // สร้างลิสต์ของแอดมิน เพื่อให้กดลบได้
     function renderAdminList(options) {
       const listContainer = $('admin-options-list');
       if (options.length === 0) {
@@ -270,7 +285,7 @@
         html += `
           <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg border border-gray-200">
             <div class="flex items-center gap-2 overflow-hidden">
-              <img src="${opt.image}" class="w-8 h-8 object-cover rounded bg-white border border-gray-200 shrink-0">
+              <img src="${opt.image}" onerror="this.src='https://placehold.co/40x40/e2e8f0/64748b?text=Error'" class="w-8 h-8 object-cover rounded bg-white border border-gray-200 shrink-0">
               <span class="text-sm font-semibold text-gray-700 truncate">${opt.label}</span>
             </div>
             <button type="button" onclick="deleteOption('${opt.id}', '${opt.label}')" class="bg-red-100 hover:bg-red-500 text-red-600 hover:text-white p-2 rounded-lg transition-colors shrink-0" title="ลบแบบนี้">
@@ -282,7 +297,6 @@
       listContainer.innerHTML = html;
     }
 
-    // ฟังก์ชันสั่งลบ
     window.deleteOption = function(id, name) {
       Swal.fire({
         title: 'ยืนยันการลบ?',
@@ -324,7 +338,7 @@
           <div class="mini-podium-item rank-2">
             <div class="text-gray-800 text-xs sm:text-sm font-bold mb-1 truncate w-full px-1">${top2.label}</div>
             <div class="text-gray-700 font-bold text-sm mb-2 bg-white px-2 py-1 rounded-full border border-gray-200 shadow-sm">${top2.votes} โหวต</div>
-            <img src="${top2.image}" class="podium-img !h-[70px] sm:!h-[90px] !mb-2 !p-1">
+            <img src="${top2.image}" onerror="this.src='https://placehold.co/100x100?text=Error'" class="podium-img !h-[70px] sm:!h-[90px] !mb-2 !p-1">
             <div class="podium-base !h-[60px]"><span class="podium-rank-num !text-2xl">2</span></div>
           </div>`;
       } else { html += `<div class="mini-podium-item"></div>`; }
@@ -335,7 +349,7 @@
             <div class="text-3xl drop-shadow-md animate-bounce mb-1">👑</div>
             <div class="text-gray-800 text-sm sm:text-base font-bold mb-1 truncate w-full px-1">${top1.label}</div>
             <div class="text-emerald-700 font-bold text-sm sm:text-base mb-2 bg-white px-3 py-1 rounded-full border border-yellow-400 shadow-sm">${top1.votes} โหวต</div>
-            <img src="${top1.image}" class="podium-img !h-[90px] sm:!h-[120px] !mb-2 !p-1">
+            <img src="${top1.image}" onerror="this.src='https://placehold.co/100x100?text=Error'" class="podium-img !h-[90px] sm:!h-[120px] !mb-2 !p-1">
             <div class="podium-base !h-[80px]"><span class="podium-rank-num !text-3xl">1</span></div>
           </div>`;
       }
@@ -345,7 +359,7 @@
           <div class="mini-podium-item rank-3">
             <div class="text-gray-800 text-xs sm:text-sm font-bold mb-1 truncate w-full px-1">${top3.label}</div>
             <div class="text-gray-700 font-bold text-sm mb-2 bg-white px-2 py-1 rounded-full border border-gray-200 shadow-sm">${top3.votes} โหวต</div>
-            <img src="${top3.image}" class="podium-img !h-[60px] sm:!h-[80px] !mb-2 !p-1">
+            <img src="${top3.image}" onerror="this.src='https://placehold.co/100x100?text=Error'" class="podium-img !h-[60px] sm:!h-[80px] !mb-2 !p-1">
             <div class="podium-base !h-[50px]"><span class="podium-rank-num !text-xl">3</span></div>
           </div>`;
       } else { html += `<div class="mini-podium-item"></div>`; }
@@ -375,7 +389,7 @@
           <div class="podium-item rank-2 transform transition hover:scale-105">
             <div class="text-gray-800 text-lg sm:text-xl font-bold mb-3 break-words w-full px-2 drop-shadow-sm leading-relaxed">${top2.label}</div>
             <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-5 py-2.5 rounded-full border border-gray-200 shadow-sm leading-normal">${top2.votes} โหวต</div>
-            <img src="${top2.image}" class="podium-img shadow-lg">
+            <img src="${top2.image}" onerror="this.src='https://placehold.co/200x200?text=Error'" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">2</span></div>
           </div>`;
       } else { podiumHTML += `<div class="podium-item"></div>`; }
@@ -386,7 +400,7 @@
             <div class="text-5xl sm:text-6xl drop-shadow-[0_5px_15px_rgba(255,215,0,0.5)] animate-bounce mb-3">👑</div>
             <div class="text-gray-800 text-xl sm:text-2xl font-bold mb-3 break-words w-full px-2 drop-shadow-sm leading-relaxed">${top1.label}</div>
             <div class="text-emerald-700 font-bold text-2xl sm:text-3xl mb-4 bg-white/95 px-6 py-3 rounded-full border-2 border-yellow-400 shadow-md leading-normal">${top1.votes} โหวต</div>
-            <img src="${top1.image}" class="podium-img shadow-xl">
+            <img src="${top1.image}" onerror="this.src='https://placehold.co/200x200?text=Error'" class="podium-img shadow-xl">
             <div class="podium-base"><span class="podium-rank-num">1</span></div>
           </div>`;
       }
@@ -396,7 +410,7 @@
           <div class="podium-item rank-3 transform transition hover:scale-105">
             <div class="text-gray-800 text-lg sm:text-xl font-bold mb-3 break-words w-full px-2 drop-shadow-sm leading-relaxed">${top3.label}</div>
             <div class="text-gray-700 font-bold text-xl sm:text-2xl mb-4 bg-white/90 px-5 py-2.5 rounded-full border border-gray-200 shadow-sm leading-normal">${top3.votes} โหวต</div>
-            <img src="${top3.image}" class="podium-img shadow-lg">
+            <img src="${top3.image}" onerror="this.src='https://placehold.co/200x200?text=Error'" class="podium-img shadow-lg">
             <div class="podium-base"><span class="podium-rank-num">3</span></div>
           </div>`;
       } else { podiumHTML += `<div class="podium-item"></div>`; }
@@ -410,7 +424,7 @@
           runnersHTML += `
             <div class="bg-white/80 backdrop-blur-sm border border-white rounded-xl p-3 flex flex-col items-center text-center transform transition hover:-translate-y-1 hover:shadow-lg shadow-sm">
               <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded mb-2 w-full text-left">อันดับ ${idx + 4}</span>
-              <div class="w-full h-24 bg-gray-50 rounded-lg p-1 mb-2 overflow-hidden border border-gray-100"><img src="${runner.image}" class="w-full h-full object-contain"></div>
+              <div class="w-full h-24 bg-gray-50 rounded-lg p-1 mb-2 overflow-hidden border border-gray-100"><img src="${runner.image}" onerror="this.src='https://placehold.co/100x100?text=Error'" class="w-full h-full object-contain"></div>
               <div class="text-gray-700 font-medium text-sm line-clamp-1 w-full leading-relaxed" title="${runner.label}">${runner.label}</div>
               <div class="text-[var(--primary-green)] font-bold text-lg mt-1">${runner.votes} โหวต</div>
             </div>
@@ -430,7 +444,7 @@
         currentOptions = data.options;
         
         buildVotingForm(data.options);
-        renderAdminList(data.options); // อัปเดตรายการในหน้าแอดมิน
+        renderAdminList(data.options); 
         
         let counts = {}; data.options.forEach(opt => counts[opt.id] = 0);
         data.votes.forEach(v => { if(counts[v] !== undefined) counts[v]++; });
@@ -478,35 +492,53 @@
       }
     });
 
+    // อัปเดตฟอร์มแอดมิน: รองรับทั้งไฟล์ และ URL
     $('add-option-form').addEventListener('submit', async e => {
       e.preventDefault();
-      $('btn-save-opt').disabled = true;
       
-      const file = $('opt-img').files[0];
-      if(!file) return;
+      const fileInput = $('opt-img-file');
+      const urlInput = $('opt-img-url').value.trim();
+      const name = $('opt-name').value.trim();
+      const file = fileInput.files[0];
 
-      Swal.fire({ title: 'กำลังอัปโหลดรูปภาพ...', html: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+      if (!file && !urlInput) {
+        Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบ', text: 'กรุณาอัปโหลดไฟล์ หรือ วางลิงก์รูปภาพอย่างใดอย่างหนึ่ง', confirmButtonColor: '#89C040' });
+        return;
+      }
 
-      const formData = new FormData();
-      formData.append('image', file);
+      $('btn-save-opt').disabled = true;
+      Swal.fire({ title: 'กำลังประมวลผล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
 
       try {
-        const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
-        const imgData = await imgRes.json();
-        
-        if(imgData.success) {
-          Swal.fire({ title: 'กำลังบันทึกลงระบบ...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+        let finalImageUrl = "";
+
+        // ถ้ามีไฟล์ ให้อัปโหลดเข้า ImgBB ก่อน
+        if (file) {
+          const formData = new FormData();
+          formData.append('image', file);
+          const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+          const imgData = await imgRes.json();
           
-          const payload = { action: 'addOption', name: $('opt-name').value, imageUrl: imgData.data.url };
-          await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-          
-          $('add-option-form').reset(); 
-          loadData();
-          
-          Swal.fire({ icon: 'success', title: 'เพิ่มตัวเลือกสำเร็จ!', text: 'อัปโหลดภาพถัดไปได้เลย', confirmButtonColor: '#89C040', timer: 2500 });
-        } else { 
-          throw new Error(imgData.error ? imgData.error.message : "เซิร์ฟเวอร์ปฏิเสธไฟล์ภาพ"); 
+          if(!imgData.success) {
+            throw new Error(imgData.error ? imgData.error.message : "เซิร์ฟเวอร์ ImgBB ปฏิเสธไฟล์ภาพ โปรดลองใช้แบบวางลิงก์แทน"); 
+          }
+          finalImageUrl = imgData.data.url;
+        } 
+        // ถ้าไม่มีไฟล์ แสดงว่าใส่วาง URL มา ก็ใช้ URL นั้นเลย
+        else {
+          finalImageUrl = urlInput;
         }
+
+        Swal.fire({ title: 'กำลังบันทึกลงระบบ...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+        
+        const payload = { action: 'addOption', name: name, imageUrl: finalImageUrl };
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        
+        $('add-option-form').reset(); 
+        loadData();
+        
+        Swal.fire({ icon: 'success', title: 'เพิ่มตัวเลือกสำเร็จ!', confirmButtonColor: '#89C040', timer: 2500 });
+        
       } catch(err) { 
         Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message, confirmButtonColor: '#89C040' });
       } finally { 
